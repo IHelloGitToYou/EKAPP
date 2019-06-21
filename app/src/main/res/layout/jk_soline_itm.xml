@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="horizontal"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000">
+
+    <CheckBox
+        android:id="@+id/edit_isSelected"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/lable_prd_no"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:background="#fff"
+        android:layout_marginLeft="1dp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/lable_FD_width"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:background="#fff"
+        android:layout_marginLeft="1dp"
+        android:layout_weight="1"  />
+
+
+</LinearLayout>
