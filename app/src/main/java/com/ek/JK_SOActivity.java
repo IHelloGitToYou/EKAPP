@@ -7,6 +7,8 @@ import android.content.pm.ActivityInfo;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -61,6 +63,22 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
         findViewById(R.id.JK_SO_BtnAdd).setOnClickListener(this);
         edit_Z_work_no = findViewById(R.id.edit_Z_work_no);
         edit_prd_no = findViewById(R.id.edit_prd_no);
+        edit_prd_no.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //di.set
+            }
+        });
     }
 
 
