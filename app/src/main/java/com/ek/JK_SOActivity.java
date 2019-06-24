@@ -9,13 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.*;
 
 import com.ek.adapter.JK_solineAdapter;
 import com.ek.adapter.OnlyNoListAdapter;
@@ -31,12 +29,16 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
 
     EditText edit_Z_work_no,edit_prd_no;
 
+    Spinner edit_wh_no;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jk_so);
 
         listView = findViewById(R.id.listViewSoItem);
+        edit_wh_no = findViewById(R.id.edit_wh_no);
+
         adapter = new JK_solineAdapter(new ArrayList<SoLineModel>());
         listView.setAdapter(adapter);
 //        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -50,6 +52,7 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("test", "onItemClick");
                 SoLineModel line = (SoLineModel)adapter.getItem(position);
                 line.isSelected = !line.isSelected;
 
@@ -79,6 +82,15 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
                 //di.set
             }
         });
+
+        String[] spinnerItems = {"WH1","WH2","WH3","WH4","WH5","WH6"};
+        //自定义选择填充后的字体样式
+        //只能是textview样式，否则报错：ArrayAdapter requires the resource ID to be a TextView
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
+                R.layout.support_simple_spinner_dropdown_item, spinnerItems);
+        //这个在不同的Theme下，显示的效果是不同的
+        //spinnerAdapter.setDropDownViewTheme(Theme.LIGHT);
+        edit_wh_no.setAdapter(spinnerAdapter);
     }
 
 
