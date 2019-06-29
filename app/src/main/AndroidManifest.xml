@@ -23,8 +23,10 @@
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".TakeOutActivity" />
-        <activity android:name=".JK_SOActivity"  android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".SelectSOItemActivity"></activity>
+        <activity
+            android:name=".JK_SOActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".SelectSOItemActivity" />
     </application>
 
 </manifest>

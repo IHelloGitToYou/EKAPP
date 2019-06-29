@@ -10,13 +10,12 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ek.adapter.OnlyNoListAdapter;
 import com.ek.adapter.SOLineListAdapter;
-import com.ek.model.OnlyNoItem;
 import com.ek.model.PageResultModel;
-import com.ek.model.SoLineModel;
+import com.ek.model.SelectSoLineModel;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -54,20 +53,24 @@ public class SelectSOItemActivity extends AppCompatActivity implements View.OnCl
         edit_Z_work_no = findViewById(R.id.edit_Z_work_no);
 
         client = new OkHttpClient();
-        adapter = new SOLineListAdapter(new ArrayList<SoLineModel>());
+        adapter = new SOLineListAdapter(new ArrayList<SelectSoLineModel>());
 
         lv.setAdapter(adapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SoLineModel line = (SoLineModel) adapter.getItem(position);
+                SelectSoLineModel line = (SelectSoLineModel) adapter.getItem(position);
                 line.isSelected = !line.isSelected;
                 if (line.isSelected ) {
-                    view.findViewById(R.id.lable_prd_no).setBackgroundColor(Color.rgb(0, 255, 20));
+                    view.findViewById(R.id.label_Z_work_no).setBackgroundColor(Color.rgb(0, 255, 20));
+                    view.findViewById(R.id.label_prd_no).setBackgroundColor(Color.rgb(0, 255, 20));
+                    view.findViewById(R.id.label_FD_width).setBackgroundColor(Color.rgb(0, 255, 20));
                 }
                 else
                 {
-                    view.findViewById(R.id.lable_prd_no).setBackgroundColor(Color.rgb(255, 255, 255));
+                    view.findViewById(R.id.label_Z_work_no).setBackgroundColor(Color.rgb(255, 255, 255));
+                    view.findViewById(R.id.label_prd_no).setBackgroundColor(Color.rgb(255, 255, 255));
+                    view.findViewById(R.id.label_FD_width).setBackgroundColor(Color.rgb(255, 255, 255));
                 }
             }
         });
@@ -89,8 +92,8 @@ public class SelectSOItemActivity extends AppCompatActivity implements View.OnCl
         switch (viewId){
             case R.id.btn_ok:
 
-                List<SoLineModel> list2 = adapter.getList();
-                ArrayList<SoLineModel> list = new ArrayList<SoLineModel>();
+                List<SelectSoLineModel> list2 = adapter.getList();
+                ArrayList<SelectSoLineModel> list = new ArrayList<SelectSoLineModel>();
                 for (int i=0;i<list2.size();++i) {
                     if(list2.get(i).isSelected)
                         list.add(list2.get(i));
@@ -160,9 +163,9 @@ public class SelectSOItemActivity extends AppCompatActivity implements View.OnCl
                 Gson gson = new Gson();
                 Log.d("gson", respTxt);
 
-                final PageResultModel<SoLineModel> result = gson.fromJson(respTxt, new TypeToken<PageResultModel<SoLineModel>>(){}.getType());
+                final PageResultModel<SelectSoLineModel> result = gson.fromJson(respTxt, new TypeToken<PageResultModel<SelectSoLineModel>>(){}.getType());
 
-                final SoLineModel[] list = result.items; //gson.fromJson(result.items, SoLineModel[].class);
+                final SelectSoLineModel[] list = result.items; //gson.fromJson(result.items, SelectSoLineModel[].class);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

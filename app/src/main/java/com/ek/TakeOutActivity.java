@@ -99,7 +99,7 @@ public class TakeOutActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(),String.format("加载卷料出错"), Toast.LENGTH_LONG);
+                        Toast.makeText(getApplicationContext(),String.format("加载卷料出错"), Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -197,7 +197,7 @@ public class TakeOutActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(),String.format("提交“出库单”出错"), Toast.LENGTH_LONG);
+                        Toast.makeText(getApplicationContext(),String.format("提交“出库单”出错"), Toast.LENGTH_LONG).show();
                     }
                 });
             }
