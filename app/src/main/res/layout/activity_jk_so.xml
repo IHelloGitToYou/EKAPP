@@ -29,7 +29,7 @@
             <EditText
                 android:id="@+id/edit_only_no"
                 android:layout_weight="3"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:singleLine="true"
@@ -41,32 +41,30 @@
                 android:layout_marginRight="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-
             <EditText
                 android:id="@+id/edit_prd_no"
                 android:layout_weight="1"
-                android:layout_width="wrap_content"
+                android:layout_width="45dp"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:imeOptions="actionSearch"
                 android:textIsSelectable="false"/>
+
             <TextView
-                android:text="厚度："
+                android:text="机台号："
                 android:layout_marginRight="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-
-            <EditText
-                android:id="@+id/edit_Z_hou3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <Spinner
+                android:id="@+id/edit_machine"
                 android:layout_weight="1"
-                android:imeOptions="actionSearch"
-                android:inputType="number"
+                android:layout_width="15dp"
+                android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textIsSelectable="false" />
+                android:imeOptions="actionSearch"
+                android:textIsSelectable="false"/>
 
             <TextView
                 android:text="涂布号："
@@ -77,8 +75,9 @@
             <EditText
                 android:id="@+id/edit_Z_top_no"
                 android:layout_weight="1"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
+                android:text="EAH190503A03"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:imeOptions="actionSearch"
@@ -398,7 +397,7 @@
                 android:layout_height="wrap_content" />
             <EditText
                 android:id="@+id/edit_Z_iface"
-                android:inputType="number"
+                android:inputType="text"
                 android:layout_width="0dp"
                 android:minWidth="150dp"
                 android:layout_height="wrap_content"
@@ -412,7 +411,7 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_columnWeight="1"
-                android:layout_width="350pt"
+                android:layout_width="350px"
                 android:layout_height="wrap_content">
                 <TextView
                     android:id="@+id/label_printor_jkxx"
@@ -433,7 +432,7 @@
                 android:orientation="horizontal"
                 android:layout_columnWeight="1"
                 android:layout_columnSpan="2"
-                android:layout_width="350pt"
+                android:layout_width="350px"
                 android:layout_height="wrap_content">
                 <TextView
                     android:id="@+id/label_printor_"
@@ -486,6 +485,30 @@
                     android:layout_weight="1"/>
             </LinearLayout>
 
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_columnWeight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/label_qty"
+                    android:text="卷数"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <EditText
+                    android:id="@+id/edit_qty"
+                    android:inputType="numberDecimal"
+                    android:layout_width="0dp"
+                    android:minWidth="150dp"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:imeOptions="actionSearch"
+                    android:textIsSelectable="false"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+
         </GridLayout>
 
         <LinearLayout
@@ -493,18 +516,21 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
             <Button
+                android:layout_marginTop="5dp"
                 android:id="@+id/Do_JK"
                 android:text="缴库"
                 android:padding="0dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <Button
+                android:layout_marginTop="5dp"
                 android:id="@+id/Do_BACK_WH4"
                 android:text="退半成品"
                 android:padding="0dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <Button
+                android:layout_marginTop="5dp"
                 android:id="@+id/Do_BACK_WH5"
                 android:text="退淋涂"
                 android:padding="0dp"
@@ -513,15 +539,30 @@
         </LinearLayout>
 
 
-        <TextView
-            android:id="@+id/edit_BZInfo"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1">
+        <TextView
+            android:id="@+id/edit_BZInfo"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:contentDescription="@string/app_name"
             android:paddingTop="3dp"
             android:paddingLeft="3dp"
             android:text="国内包装，不贴标签，外包缠绕膜" />
+
+            <ListView
+                android:id="@+id/listHistoryJL"
+                android:layout_weight="3"
+                android:layout_width="match_parent"
+                android:minHeight="100dp"
+                android:layout_height="0dp"></ListView>
+
+        </LinearLayout>
+
 
     </LinearLayout>
 

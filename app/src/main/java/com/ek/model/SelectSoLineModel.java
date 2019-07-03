@@ -18,20 +18,19 @@ public class SelectSoLineModel implements Serializable
     public Double FD_core;
     public Integer Z_sale_hou3;
 
-    public Double Z_core_kg;
 
     public Integer qty;
     public Double qty1;
     public Integer qty_jk;
-    public String Z_print;
     public String Z_bzinfo;
 
     //缴库区新建栏位
-    public String print_jk;
-    public String print_back;
-    public String printor_back;
-    public String printor_jk;
 
+    public Double Z_core_kg;
+    public String Z_print;
+    public String print_back;
+//    public String printor_jk;
+//    public String printor_back;     //打印机应该不会变的
 
 
     public boolean isSelected;

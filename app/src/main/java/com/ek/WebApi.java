@@ -12,6 +12,8 @@ public class WebApi {
     public static String URL_JL= "/ASHX/EK/CK/Ashx_JL.ashx";
     public static String URL_SO= "/Ashx/EK/SO/Ashx_EK_SO.ashx";
     public static String URL_HostPrint= "/Ashx/Core/FD/Ashx_Print.ashx";
+    public static String URL_EKJK= "/Ashx/EK/SC/EK_JK.ashx";
+    public static String URL_EKJOB= "/Ashx/EK/SC/Ashx_JOB.ashx";
 
     public static String getRealUrl(String u)
     {

@@ -69,6 +69,15 @@ public class JK_solineAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public SelectSoLineModel GetSelecteted(){
+        for (int i = 0; i < list.size() ; i++) {
+            if(list.get(i).isSelected == true)
+                return list.get(i);
+        }
+        return null;
+    }
+
+
     @Override
     public long getItemId(int position) {
         return position;
@@ -104,7 +113,7 @@ public class JK_solineAdapter extends BaseAdapter {
         holder.label_FD_core.setText(list.get(position).FD_core+"");
         holder.label_so_no.setText(list.get(position).so_no+"");
         holder.label_show_qty.setText(list.get(position).qty_jk + " / 已缴:" + list.get(position).qty);
-        holder.label_Z_print.setText(list.get(position).Z_print);
+        holder.label_Z_print.setText(list.get(position).Z_print + "");
         return convertView;
     }
 
