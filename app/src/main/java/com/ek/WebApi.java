@@ -4,7 +4,10 @@ import java.net.PortUnreachableException;
 
 
 public class WebApi {
-    public static String HOST = "http://192.168.43.117:8099";//http://192.168.2.108:8099";
+
+    //public static String HOST = "http://192.168.2.103:8099";//http://192.168.2.108:8099";
+    //public static String HOST = "http://192.168.43.117:8099";//http://192.168.2.108:8099";
+    public static String HOST = "http://192.168.1.137:80";
     public static String URL_LOGIN = "/ASHX/Core/FD/Ashx_DBInfo.ashx";
     public static String URL_PRDTONLY = "/ASHX/Core/FD/Ashx_PrdtOnly.ashx";
     public static String URL_VONLINE = "/ASHX/Core/FD/Ashx_Vonline.ashx";
@@ -20,8 +23,6 @@ public class WebApi {
         return HOST + u;
     }
 
-
-    //加载打印模版
-
+    public static String Utf8_Split = "|A.A|____";
 }
 

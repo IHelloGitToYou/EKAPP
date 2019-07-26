@@ -1,5 +1,4 @@
 package com.ek;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -41,9 +39,11 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
 public class JK_SOActivity extends AppCompatActivity implements View.OnClickListener{
     JK_solineAdapter adapter;
     HistoryJLAdapter historyJLAdapter;
@@ -51,13 +51,16 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
 
     EditText  edit_Z_top_no, edit_Z_hou3,edit_only_no,edit_prd_no_header;
 
-    EditText edit_Z_work_no,edit_prd_no,edit_prd_no_bottom,edit_Z_hou3_bottom,edit_FD_core,edit_Z_core_kg,edit_qty, edit_qty1,edit_Z_kg,edit_Z_iface;
+    EditText edit_Z_work_no,edit_prd_no,edit_prd_no_bottom,edit_Z_hou3_bottom,edit_FD_core,edit_Z_core_kg,edit_qty, edit_qty1,edit_Z_kg,edit_Z_iface,edit_only_rem;
     EditText FD_width, FD_length;
     TextView edit_BZInfo;
 
     CheckBox edit_is_multi;
     Spinner edit_machine, edit_wh_no, edit_print_jk, edit_print_back ,edit_printor_jk, edit_printor_back;
     OkHttpClient client;
+
+    ArrayAdapter<WHInfoModel> spinnerWHAdapter;
+    ArrayAdapter<WHInfoModel> spinnerMachineAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,14 +87,15 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
         findViewById(R.id.Do_JK).setOnClickListener(this);
         findViewById(R.id.Do_BACK_WH4).setOnClickListener(this);
         findViewById(R.id.Do_BACK_WH5).setOnClickListener(this);
+        findViewById(R.id.Show_HistoryJL).setOnClickListener(this);
 
         findViewById(R.id.JK_SO_BtnAdd).setOnClickListener(this);
         adapter = new JK_solineAdapter(new ArrayList<SelectSoLineModel>());
         historyJLAdapter = new HistoryJLAdapter(new ArrayList<HistoryJLModel>());
+
         listView.setAdapter(adapter);
         listHistoryJL.setAdapter(historyJLAdapter);
-        ArrayAdapter<WHInfoModel> spinnerWHAdapter;
-        ArrayAdapter<String> spinnerMachineAdapter;
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -145,6 +149,7 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
         edit_qty1 = findViewById(R.id.edit_qty1);
         edit_Z_kg = findViewById(R.id.edit_Z_kg);
         edit_Z_iface = findViewById(R.id.edit_Z_iface);
+        edit_only_rem = findViewById(R.id.edit_only_rem);
         edit_is_multi = findViewById(R.id.edit_is_multi);
         FD_width = findViewById(R.id.edit_FD_width);
         FD_length = findViewById(R.id.edit_FD_length);
@@ -194,16 +199,30 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
         //spinnerAdapter.setDropDownViewTheme(Resources.Theme.LIGHT);
         edit_wh_no.setAdapter(spinnerWHAdapter);
 
-        String[] machineItems = {"A1","A2","A3","A4","A5","A6", "A7", "A8"};
-        spinnerMachineAdapter = new ArrayAdapter<>(this,
-                R.layout.support_simple_spinner_dropdown_item, machineItems);
-        edit_machine.setAdapter(spinnerMachineAdapter);
+        setMachines();
 
         loadPrintorModels("JLIN");
         loadPrintorModels("JLBACK");
         loadPrintotr();
 
         listenOnlyNoChange();
+    }
+
+    private  void setMachines(){
+        WHInfoModel[] machineItems = new WHInfoModel[8];//{"A1","A2","A3","A4","A5","A6", "A7", "A8"};
+        machineItems[0] = new WHInfoModel();machineItems[0].wh_no = "A1"; machineItems[0].name = "A1";
+        machineItems[1] = new WHInfoModel();machineItems[1].wh_no = "A2"; machineItems[1].name = "A2";
+        machineItems[2] = new WHInfoModel();machineItems[2].wh_no = "A3"; machineItems[2].name = "A3";
+        machineItems[3] = new WHInfoModel();machineItems[3].wh_no = "A4"; machineItems[3].name = "A4";
+        machineItems[4] = new WHInfoModel();machineItems[4].wh_no = "A5"; machineItems[4].name = "A5";
+        machineItems[5] = new WHInfoModel();machineItems[5].wh_no = "A6"; machineItems[5].name = "A6";
+        machineItems[6] = new WHInfoModel();machineItems[6].wh_no = "A7"; machineItems[6].name = "A7";
+        machineItems[7] = new WHInfoModel();machineItems[7].wh_no = "A8"; machineItems[6].name = "A8";
+
+
+        spinnerMachineAdapter = new ArrayAdapter<>(this,
+                R.layout.support_simple_spinner_dropdown_item, machineItems);
+        edit_machine.setAdapter(spinnerMachineAdapter);
     }
 
     private void listenOnlyNoChange(){
@@ -258,6 +277,16 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
             return false;
         };
 
+        if(getDouble(edit_qty1.getText().toString()) <= 0){
+            Toast.makeText(getApplicationContext(),String.format("净重不能是负数!"), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if(getDouble(edit_qty.getText().toString()) > 1 && edit_is_multi.isChecked() == false){
+            Toast.makeText(getApplicationContext(),String.format("卷数不能大于1"), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
         WHInfoModel wh = (WHInfoModel)edit_wh_no.getSelectedItem();
         if(wh == null){
             Toast.makeText(getApplicationContext(),String.format("仓库非选择!"), Toast.LENGTH_SHORT).show();
@@ -279,24 +308,29 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
 
         builder.setNegativeButton("取消",new android.content.DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(getApplicationContext(),String.format("选  nolooooooo了 "), Toast.LENGTH_SHORT).show();
+                Clicking = false;
+                Toast.makeText(getApplicationContext(),String.format("选  取消 "), Toast.LENGTH_SHORT).show();
             }
         });
         builder.create().show();
     }
 
     private  void doJKBefore(){
-        if(checkSubmit() == false)
+        if(checkSubmit() == false) {
+            Clicking = false;
             return;
+        }
 
         final SelectSoLineModel line = (SelectSoLineModel) adapter.GetSelecteted();
         if(line == null){
+            Clicking = false;
             Toast.makeText(getApplicationContext(),"请先选择订单缴库规格!", Toast.LENGTH_SHORT).show();
             return;
         }
 
         PrintorModel pModel = (PrintorModel)edit_print_jk.getSelectedItem();
         if(pModel == null || pModel.name.isEmpty()){
+            Clicking = false;
             Toast.makeText(getApplicationContext(),"请缴库模版, 未选择!", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -318,7 +352,7 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
     private void getGetWallNumberByJLNumberCounter(final String wh_no, final Boolean isJK){
 
         final String Z_top_no = edit_Z_top_no.getText().toString();
-        final String machineNumber = (String)edit_machine.getSelectedItem();
+        final WHInfoModel machineNumber = (WHInfoModel)edit_machine.getSelectedItem();
 
         HashMap<String,String> paramsMap = new HashMap<>();
         paramsMap.put("NowLoginId", MainActivity.current_login_id);
@@ -342,6 +376,7 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Clicking = false;
                         Toast.makeText(getApplicationContext(),String.format("取卷流水号出错"), Toast.LENGTH_LONG).show();
                     }
                 });
@@ -361,11 +396,11 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
                             String newNo = "";
                             //Log.d("test", "respTxt="+ respTxt );
                             if (isJK == true) {
-                                newNo = jk_ZtopNo + machineNumber + fnFillZero(model.data);
+                                newNo = jk_ZtopNo + machineNumber.name + fnFillZero(model.data);
                                 doJK(newNo);
                             }
                             else{
-                                newNo = "B" + jk_ZtopNo + machineNumber + fnFillZero(model.data);
+                                newNo = "B" + jk_ZtopNo + machineNumber.name + fnFillZero(model.data);
                                 doBack(wh_no, newNo);
                             }
                         }
@@ -379,7 +414,7 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
 
 
     private  HashMap<String,String> getJLParam(){
-        final String machineNumber = (String)edit_machine.getSelectedItem();
+        final WHInfoModel machineNumber = (WHInfoModel)edit_machine.getSelectedItem();
 
         HashMap<String,String> paramsMap = new HashMap<>();
         paramsMap.put("NowLoginId", MainActivity.current_login_id);
@@ -387,19 +422,19 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
         paramsMap.put("action","InsertJLRow");
         paramsMap.put("Z_top_no",edit_Z_top_no.getText().toString());
         paramsMap.put("up_only_no","");
-        paramsMap.put("type","CKJK");
+
 
         PrintorModel pModel = (PrintorModel)edit_print_jk.getSelectedItem();
         paramsMap.put("signPrinter", pModel.name);
-        paramsMap.put("machine", machineNumber);
+        paramsMap.put("machine", machineNumber.name);
         paramsMap.put("json","[]");
         paramsMap.put("workId","WORK");
         paramsMap.put("workingNo","PDA_2019");
 
         paramsMap.put("prd_no", edit_prd_no_bottom.getText().toString());
         paramsMap.put("Z_hou3","");
-        paramsMap.put("FD_width", getInt( FD_width.getText().toString()) + "");
-        paramsMap.put("FD_length",getDouble( FD_length.getText().toString()) + "");
+        paramsMap.put("FD_width",  getInt( FD_width.getText().toString()) + "");
+        paramsMap.put("FD_length", getInt( FD_length.getText().toString()) + "");
         paramsMap.put("FD_core", getDouble(edit_FD_core.getText().toString()) + "");
         if(paramsMap.get("FD_core").toString().equals("3.0"))
             paramsMap.put("FD_core", "3");
@@ -421,27 +456,36 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
         WHInfoModel wh = (WHInfoModel)edit_wh_no.getSelectedItem();
         paramsMap.put("wh_no",wh.wh_no);
 
-        paramsMap.put("only_rem","");
+        paramsMap.put("only_rem",edit_only_rem.getText().toString());
         paramsMap.put("Z_iface",edit_Z_iface.getText().toString());
 
         paramsMap.put("Z_work_no",edit_Z_work_no.getText().toString());
+
+
 
         return paramsMap;
     }
 
     private void doJK(final String newNo){
+
         if(newNo.length() <= 3){
             Toast.makeText(getApplicationContext(),String.format("卷长度少于3异常"), Toast.LENGTH_LONG).show();
+            Clicking = false;
             return;
         }
 
         final SelectSoLineModel line = (SelectSoLineModel) adapter.GetSelecteted();
        //加载变量
         final HashMap<String,String> paramsMap = getJLParam();
+        paramsMap.put("type","CKJK");
         paramsMap.put("only_no", newNo);
         paramsMap.put("so_id","SO");
         paramsMap.put("so_no",line.so_no);
         paramsMap.put("itm",line.itm + "");
+
+        paramsMap.put("lock_table_id", "SO");
+        paramsMap.put("lock_table_no", line.so_no);
+        paramsMap.put("lock_table_itm",line.itm + "");
 
         FormBody.Builder builder = new FormBody.Builder();
         for (String key : paramsMap.keySet()) {
@@ -454,6 +498,7 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                Clicking = false;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() { Toast.makeText(getApplicationContext(),String.format("缴库出错!"), Toast.LENGTH_SHORT).show(); }});
@@ -466,11 +511,12 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Clicking = false;
                         if (model != null )
                         {
                             if(model.result ==  true) {
-                                Toast.makeText(getApplicationContext(), String.format("缴卷成功!" + newNo), Toast.LENGTH_LONG).show();
-                                afterDoDk(paramsMap, newNo);
+                                Toast.makeText(getApplicationContext(), String.format("缴卷成功!" + newNo+' ' + model.qty), Toast.LENGTH_LONG).show();
+                                afterDoDk(paramsMap, newNo, model);
                             }
                             else{
                                 Toast.makeText(getApplicationContext(),String.format("缴卷失败:"+ model.msg), Toast.LENGTH_LONG).show();
@@ -485,32 +531,35 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
-    private  void afterDoDk(HashMap<String,String> paramsMap, String newNo){
+    private  void afterDoDk(HashMap<String,String> paramsMap, String newNo, NormalResult model){
+        paramsMap.put("only_rem",edit_only_rem.getText().toString() + WebApi.Utf8_Split);
+        paramsMap.put("Z_iface",edit_Z_iface.getText().toString()+ WebApi.Utf8_Split);
+
         //更新订单行上的
         final SelectSoLineModel line = (SelectSoLineModel) adapter.GetSelecteted();
+        paramsMap.put("Z_hou3", line.Z_sale_hou3 + "");
         line.Z_core_kg = getDouble( edit_Z_core_kg.getText().toString());
-        adapter.notifyDataSetChanged();
 
         PrintorModel pJKModel = (PrintorModel) edit_print_jk.getSelectedItem();
         PrintorModel pBackModel = (PrintorModel) edit_print_back.getSelectedItem();
-        //PrintorModel printorJK = (PrintorModel) edit_printor_jk.getSelectedItem();
-        //PrintorModel printorBack = (PrintorModel) edit_printor_back.getSelectedItem();
-
         if(pJKModel != null)
             line.Z_print = pJKModel.name;
         if(pBackModel != null)
             line.print_back = pBackModel.name;
-//       if(printorJK != null)
-//            line.printor_jk = printorJK.name;
-//        if(printorBack != null)
-//            line.printor_back = printorBack.name;
+
+        line.qty_jk = model.qty;
+        adapter.notifyDataSetChanged();
+
 
         //edit_Z_core_kg.setText("");
         edit_qty1.setText("");
         edit_Z_kg.setText("");
 
         //插入到历史卷区
-        String showText = newNo + " " +  paramsMap.get("FD_width") + "*" + paramsMap.get("FD_length") ;
+        String showText = newNo + " " +  paramsMap.get("FD_width") + "*"
+                                        + paramsMap.get("FD_length") + "  "
+                                        + paramsMap.get("qty1") + "kg";
+
         HistoryJLModel h =  new HistoryJLModel();
         h.showMsg = showText;
         h.isNew = true;
@@ -529,16 +578,121 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
 
 
     private  void doBackBefore(final String wh_no, final String newNo){
-        if(checkSubmit() == false)
+        if(checkSubmit() == false) {
+            Clicking = false;
             return;
+        }
+
+        getGetWallNumberByJLNumberCounter(wh_no,false);
     }
 
     private void doBack(final String wh_no, final String newNo){
+        if(newNo.length() <= 3){
+            Clicking = false;
+            Toast.makeText(getApplicationContext(),String.format("卷长度少于3异常"), Toast.LENGTH_LONG).show();
+            return;
+        }
+        //加载变量
+        final HashMap<String,String> paramsMap = getJLParam();
+        paramsMap.put("type","CKBACK");
+        paramsMap.put("only_no", newNo);
+        paramsMap.put("so_id","");
+        paramsMap.put("so_no","");
+        paramsMap.put("itm", "");
 
+        FormBody.Builder builder = new FormBody.Builder();
+        for (String key : paramsMap.keySet()) {
+            builder.add(key, paramsMap.get(key));
+        }
+        Request request = new Request.Builder()
+                .url(WebApi.getRealUrl(WebApi.URL_EKJOB))
+                .post(builder.build())
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Clicking = false;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() { Toast.makeText(getApplicationContext(),String.format("退卷出错!"), Toast.LENGTH_SHORT).show(); }});
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String respTxt =  response.body().string();
+                Gson gson = new Gson();
+                final NormalResult model = gson.fromJson(respTxt, NormalResult.class);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Clicking = false;
+                        if (model != null )
+                        {
+                            if(model.result ==  true) {
+                                Toast.makeText(getApplicationContext(), String.format("退卷成功!" + newNo), Toast.LENGTH_LONG).show();
+                                afterDoBack(paramsMap, newNo, wh_no);
+                            }
+                            else{
+                                Toast.makeText(getApplicationContext(),String.format("退卷失败:"+ model.msg), Toast.LENGTH_LONG).show();
+                            }
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(),String.format("退卷失败:"), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+            }
+        });
     }
 
+
+    private  void afterDoBack(HashMap<String,String> paramsMap, String newNo, String wh_no){
+        paramsMap.put("only_rem",edit_only_rem.getText().toString() + WebApi.Utf8_Split);
+        paramsMap.put("Z_iface",edit_Z_iface.getText().toString()+ WebApi.Utf8_Split);
+
+        //更新订单行上的
+        final SelectSoLineModel line = (SelectSoLineModel) adapter.GetSelecteted();
+        paramsMap.put("Z_hou3", line.Z_sale_hou3 + "");
+
+        PrintorModel pJKModel = (PrintorModel) edit_print_jk.getSelectedItem();
+        PrintorModel pBackModel = (PrintorModel) edit_print_back.getSelectedItem();
+        if(pJKModel != null)
+            line.Z_print = pJKModel.name;
+        if(pBackModel != null)
+            line.print_back = pBackModel.name;
+
+        //edit_Z_core_kg.setText("");
+        edit_qty1.setText("");
+        edit_Z_kg.setText("");
+
+        //插入到历史卷区
+        String showFix = "退";
+        if(wh_no.equals("WH5"))
+            showFix = "淋";
+
+        String showText = showFix + newNo + " " +  paramsMap.get("FD_width") + "*" + paramsMap.get("FD_length") ;
+        HistoryJLModel h =  new HistoryJLModel();
+
+        h.showMsg = showText;
+        h.isNew = true;
+        historyJLAdapter.add(0, h);
+
+
+        //打印 退料 卷
+        PrintorModel printor = (PrintorModel)edit_printor_back.getSelectedItem();
+        PrintorModel printModel  = (PrintorModel)edit_print_back.getSelectedItem();
+
+        if(printor != null && printor.name.isEmpty() == false && printModel != null && printModel.name.isEmpty() == false){
+            doPrintJL(printor.name, printModel.name, paramsMap);
+        }
+    }
+
+
+    Boolean Clicking = false;
     @Override
     public void onClick(View v) {
+        if(Clicking.equals(true))
+            return;
+
         int viewId = v.getId();
         switch (viewId){
             case R.id.JK_SO_BtnAdd:
@@ -548,15 +702,28 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
                 startActivityForResult(new Intent(this, SelectSOItemActivity.class),SelectSOItemActivity.SELECTED_COMPLETE );
                 break;
             case R.id.Do_JK:
+                    Clicking = true;
                     doJKBefore();
                 break;
             case R.id.Do_BACK_WH4:
-                    //doBackBefore("WH4","");
+                    Clicking = true;
+                    doBackBefore("WH4","");
                 break;
             case R.id.Do_BACK_WH5:
-                    //doBackBefore("WH5","");
+                Clicking = true;
+                    doBackBefore("WH5","");
+            case R.id.Show_HistoryJL://历史
+                //弹出新的UI 加入查询条件？  //显示JLLiveView,
+                startActivityForResult(new Intent(this, ShowHistoryOnlyActivity.class), ShowHistoryOnlyActivity.SELECTED_COMPLETE );
+                // 进行处理
+                // 修改
+                // 删除
+                // 打印
+                //doBackBefore("WH5","");
                 break;
         }
+
+
     }
 
 
@@ -620,22 +787,31 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
 
     //////////////////以下是工具类
     //打印卷料
-    protected void doPrintJL(String printor, String printModel, HashMap<String,String> paramsJL ){
-        paramsJL.put("CONN", "StarEK");
-        paramsJL.put("printor", printor);
-        paramsJL.put("print", printModel);
+    protected void doPrintJL(String printor, String printModel, HashMap<String,String> paramsJL )  {
 
-        FormBody.Builder builder = new FormBody.Builder();
+        paramsJL.put("CONN", "StarEK");
+        paramsJL.put("action", "PrintJLByAndroid");         //new String(b, "GB2312")
+        paramsJL.put("printor", printor + WebApi.Utf8_Split); //
+        paramsJL.put("print", printModel + WebApi.Utf8_Split);
+
+
+        HttpUrl.Builder builder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(WebPrintorApi.HOST_IP)
+                .port(8223)
+                .addPathSegment("/StarService");
+
         for (String key : paramsJL.keySet()) {
             //追加表单信息
-            builder.add(key, paramsJL.get(key));
+            builder.addQueryParameter(key, paramsJL.get(key));
         }
-        Request request = new Request.Builder()
-                .url( WebPrintorApi.getRealUrl("?action=打印吧"))
-                .post(builder.build())
-                .build();
 
-        Log.d("test", "打印吧 " + WebPrintorApi.getRealUrl("?action=打印吧"));
+        HttpUrl url = builder.build();
+        Request request = new Request.Builder()
+                .addHeader("content-type", "application/x-www-form-urlencoded;charset=gb2312")
+                .url(url)
+                .get()
+                .build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -666,7 +842,7 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        //处理返回的数据 增加订单规格 返回的
+        //处理返回的数据 [增加订单规格] 返回的
         if(requestCode == SelectSOItemActivity.SELECTED_COMPLETE){
             List<SelectSoLineModel> list = (List<SelectSoLineModel>)data.getSerializableExtra("SoItems");
             for (int i = 0; i < list.size(); i++) {
@@ -674,7 +850,13 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
                 adapter.add(list.get(i));
             }
         }
+
+        //历史卷料 返回 （可能是修改回来）
+
+
         super.onActivityResult(requestCode, resultCode, data);
+
+
     }
 
     private Double getDouble(String s){

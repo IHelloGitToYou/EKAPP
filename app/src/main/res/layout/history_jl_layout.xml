@@ -6,10 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:descendantFocusability="blocksDescendants"
-    android:background="#091">
+    android:background="#081">
 
     <TextView
-        android:id="@+id/label_text"
+        android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="25dp"
         android:background="#091"

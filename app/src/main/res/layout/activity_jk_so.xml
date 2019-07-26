@@ -59,7 +59,7 @@
             <Spinner
                 android:id="@+id/edit_machine"
                 android:layout_weight="1"
-                android:layout_width="15dp"
+                android:layout_width="45dp"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:singleLine="true"
@@ -77,12 +77,11 @@
                 android:layout_weight="1"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="EAH190503A03"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:imeOptions="actionSearch"
                 android:textIsSelectable="false"/>
-
+            <!--android:text="EAH190503A03"-->
 
         </LinearLayout>
 
@@ -122,7 +121,7 @@
         android:layout_height="0dp"
         android:layout_weight="60">
 
-        <GridLayout
+        <TableLayout
             android:columnCount="3"
             android:layout_weight="2"
             android:orientation="horizontal"
@@ -130,386 +129,440 @@
             android:layout_height="match_parent"
             android:background="@color/colorPrimary">
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_columnWeight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/label_Z_work_no"
-                android:text="客户订单"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <EditText
-                android:id="@+id/edit_Z_work_no"
-                android:inputType="number"
-                android:layout_width="0dp"
-                android:minWidth="100dp"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:imeOptions="actionSearch"
-                android:layout_weight="1"
-                android:textIsSelectable="false" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_columnWeight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/label_prd_no"
-                    android:text="货品"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <EditText
-                    android:id="@+id/edit_prd_no_bottom"
-                    android:inputType="number"
-                    android:layout_width="0dp"
-                    android:minWidth="150dp"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:imeOptions="actionSearch"
-                    android:textIsSelectable="false"
-                    android:layout_weight="1"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
+            <TableRow>
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_columnWeight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/label_Z_hou3"
-                    android:text="厚度"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <EditText
-                    android:id="@+id/edit_Z_hou3_bottom"
-                    android:inputType="number"
-                    android:layout_width="0dp"
-                    android:minWidth="150dp"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:imeOptions="actionSearch"
-                    android:textIsSelectable="false"
-                    android:layout_weight="1"/>
-            </LinearLayout>
-
-
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_columnWeight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                    android:layout_height="wrap_content">
                 <TextView
-                    android:id="@+id/label_FD_width"
-                    android:text="宽度"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <EditText
-                    android:id="@+id/edit_FD_width"
-                    android:inputType="number"
-                    android:layout_width="0dp"
-                    android:minWidth="150dp"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:imeOptions="actionSearch"
-                    android:textIsSelectable="false"
-                    android:layout_weight="1"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_columnWeight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/label_FD_length"
-                    android:text="长度"
+                    android:id="@+id/label_Z_work_no"
+                    android:text="客户订单"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <EditText
-                    android:id="@+id/edit_FD_length"
-                    android:inputType="numberDecimal"
+                    android:id="@+id/edit_Z_work_no"
+                    android:inputType="number"
                     android:layout_width="0dp"
-                    android:minWidth="100dp"
+                    android:minWidth="80dp"
+                    android:maxWidth="100dp"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:imeOptions="actionSearch"
                     android:layout_weight="1"
                     android:textIsSelectable="false" />
-            </LinearLayout>
+                </LinearLayout>
 
-
-
-
-            <!-- line 2 -->
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_columnWeight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/label_FD_core"
-                android:text="纸芯"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <EditText
-                android:id="@+id/edit_FD_core"
-                android:inputType="number"
-                android:layout_width="0dp"
-                android:minWidth="150dp"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:imeOptions="actionSearch"
-                android:textIsSelectable="false"
-                android:layout_weight="1"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_columnWeight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/label_Z_core_kg"
-                android:text="纸芯重："
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <EditText
-                android:id="@+id/edit_Z_core_kg"
-                android:inputType="numberDecimal"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:minWidth="150dp"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:imeOptions="actionSearch"
-                android:textIsSelectable="false"
-                android:layout_weight="1" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_columnWeight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/label_qty1"
-                android:text="净重："
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <EditText
-                android:id="@+id/edit_qty1"
-                android:inputType="numberDecimal"
-                android:layout_width="0dp"
-                android:minWidth="150dp"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:imeOptions="actionSearch"
-                android:textIsSelectable="false"
-                android:layout_weight="1"/>
-            </LinearLayout>
-
-
-
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_columnWeight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/label_Z_kg"
-                android:text="毛重"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <EditText
-                android:id="@+id/edit_Z_kg"
-                android:inputType="numberDecimal"
-                android:layout_width="0dp"
-                android:minWidth="150dp"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:imeOptions="actionSearch"
-                android:textIsSelectable="false"
-                android:layout_weight="1"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_columnWeight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/label_is_multi"
-                android:text="是否集合"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <CheckBox
-                android:id="@+id/edit_is_multi"
-                android:inputType="number"
-                android:layout_width="0dp"
-                android:minWidth="150dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_columnWeight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/label_wh_no"
-                android:text="仓库"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <Spinner
-                android:id="@+id/edit_wh_no"
-                android:layout_width="0dp"
-                android:minWidth="150dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
-            </LinearLayout>
-
-
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_columnWeight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/label_Z_iface"
-                android:text="接口"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <EditText
-                android:id="@+id/edit_Z_iface"
-                android:inputType="text"
-                android:layout_width="0dp"
-                android:minWidth="150dp"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:imeOptions="actionSearch"
-                android:textIsSelectable="false"
-                android:layout_weight="1"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_columnWeight="1"
-                android:layout_width="350px"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/label_printor_jkxx"
-                    android:text="缴库打印机"
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_columnWeight="1"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <Spinner
-                    android:id="@+id/edit_printor_jk"
-                    android:layout_gravity="fill_horizontal"
-                    android:layout_width="0dp"
-                    android:minWidth="50dp"
-                    android:overScrollMode="never"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
-            </LinearLayout>
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/label_prd_no"
+                        android:text="货品"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <EditText
+                        android:id="@+id/edit_prd_no_bottom"
+                        android:inputType="number"
+                        android:layout_width="0dp"
+                        android:minWidth="80dp"
+                        android:maxWidth="100dp"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:imeOptions="actionSearch"
+                        android:textIsSelectable="false"
+                        android:layout_weight="1"/>
+                </LinearLayout>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_columnWeight="1"
-                android:layout_columnSpan="2"
-                android:layout_width="350px"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/label_printor_"
-                    android:text="退仓打印机"
+                <LinearLayout
+                    android:orientation="horizontal"
+                        android:layout_columnWeight="1"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <Spinner
-                    android:id="@+id/edit_printor_back"
-                    android:layout_gravity="fill_horizontal"
-                    android:layout_width="0dp"
-                    android:minWidth="50dp"
-                    android:overScrollMode="never"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
-            </LinearLayout>
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/label_Z_hou3"
+                        android:text="厚度"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <EditText
+                        android:id="@+id/edit_Z_hou3_bottom"
+                        android:inputType="number"
+                        android:layout_width="0dp"
+                        android:minWidth="80dp"
+                        android:maxWidth="100dp"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:imeOptions="actionSearch"
+                        android:textIsSelectable="false"
+                        android:layout_weight="1"/>
+                </LinearLayout>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_columnWeight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/label_print_jk"
-                    android:text="缴库模版"
+            </TableRow>
+
+
+            <TableRow>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_columnWeight="1"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <Spinner
-                    android:id="@+id/edit_print_jk"
-                    android:layout_width="0dp"
-                    android:minWidth="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
-            </LinearLayout>
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/label_FD_width"
+                        android:text="宽度"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <EditText
+                        android:id="@+id/edit_FD_width"
+                        android:inputType="number"
+                        android:layout_width="0dp"
+                        android:minWidth="80dp"
+                        android:maxWidth="100dp"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:imeOptions="actionSearch"
+                        android:textIsSelectable="false"
+                        android:layout_weight="1"/>
+                </LinearLayout>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_columnWeight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/label_print_back"
-                    android:text="退仓模版"
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_columnWeight="1"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <Spinner
-                    android:id="@+id/edit_print_back"
-                    android:layout_width="0dp"
-                    android:minWidth="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
-            </LinearLayout>
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/label_FD_length"
+                        android:text="长度"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <EditText
+                        android:id="@+id/edit_FD_length"
+                        android:inputType="numberDecimal"
+                        android:layout_width="0dp"
+                        android:minWidth="80dp"
+                        android:maxWidth="100dp"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:imeOptions="actionSearch"
+                        android:layout_weight="1"
+                        android:textIsSelectable="false" />
+                </LinearLayout>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_columnWeight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_columnWeight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
                 <TextView
-                    android:id="@+id/label_qty"
-                    android:text="卷数"
+                    android:id="@+id/label_FD_core"
+                    android:text="纸芯"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
                 <EditText
-                    android:id="@+id/edit_qty"
-                    android:inputType="numberDecimal"
+                    android:id="@+id/edit_FD_core"
+                    android:inputType="number"
                     android:layout_width="0dp"
-                    android:minWidth="150dp"
+                    android:minWidth="80dp"
+                    android:maxWidth="100dp"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:imeOptions="actionSearch"
                     android:textIsSelectable="false"
                     android:layout_weight="1"/>
+                </LinearLayout>
 
-            </LinearLayout>
+            </TableRow>
 
-        </GridLayout>
+            <TableRow>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_columnWeight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/label_Z_core_kg"
+                    android:text="纸芯重："
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <EditText
+                    android:id="@+id/edit_Z_core_kg"
+                    android:inputType="numberDecimal"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:minWidth="80dp"
+                    android:maxWidth="100dp"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:imeOptions="actionSearch"
+                    android:textIsSelectable="false"
+                    android:layout_weight="1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_columnWeight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/label_qty1"
+                    android:text="净重："
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <EditText
+                    android:id="@+id/edit_qty1"
+                    android:inputType="numberDecimal"
+                    android:layout_width="0dp"
+                    android:minWidth="80dp"
+                    android:maxWidth="100dp"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:imeOptions="actionSearch"
+                    android:textIsSelectable="false"
+                    android:layout_weight="1"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_columnWeight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/label_Z_kg"
+                    android:text="毛重"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <EditText
+                    android:id="@+id/edit_Z_kg"
+                    android:inputType="numberDecimal"
+                    android:layout_width="0dp"
+                    android:minWidth="80dp"
+                    android:maxWidth="100dp"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:imeOptions="actionSearch"
+                    android:textIsSelectable="false"
+                    android:layout_weight="1"/>
+                </LinearLayout>
+
+            </TableRow>
+
+            <TableRow>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_columnWeight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/label_is_multi"
+                    android:text="是否集合"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <CheckBox
+                    android:id="@+id/edit_is_multi"
+                    android:inputType="number"
+                    android:layout_width="0dp"
+                    android:minWidth="80dp"
+                    android:maxWidth="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_columnWeight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/label_wh_no"
+                    android:text="仓库"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <Spinner
+                    android:id="@+id/edit_wh_no"
+                    android:layout_width="0dp"
+                    android:minWidth="80dp"
+                    android:maxWidth="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_columnWeight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/label_Z_iface"
+                    android:text="接口"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <EditText
+                    android:id="@+id/edit_Z_iface"
+                    android:inputType="text"
+                    android:layout_width="0dp"
+                    android:minWidth="80dp"
+                    android:maxWidth="100dp"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:imeOptions="actionSearch"
+                    android:textIsSelectable="false"
+                    android:layout_weight="1"/>
+                </LinearLayout>
+
+            </TableRow>
+
+            <TableRow>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_columnWeight="1"
+                    android:layout_width="250px"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/label_printor_jkxx"
+                        android:text="缴库打印机"
+                        android:layout_marginRight="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <Spinner
+                        android:id="@+id/edit_printor_jk"
+                        android:layout_gravity="fill_horizontal"
+                        android:layout_width="0dp"
+                        android:minWidth="50dp"
+                        android:overScrollMode="never"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_columnWeight="1"
+                    android:layout_columnSpan="1"
+                    android:layout_width="250px"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/label_printor_"
+                        android:text="退仓打印机"
+                        android:layout_marginRight="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <Spinner
+                        android:id="@+id/edit_printor_back"
+                        android:layout_gravity="fill_horizontal"
+                        android:layout_width="0dp"
+                        android:minWidth="50dp"
+                        android:overScrollMode="never"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_columnWeight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/label_only_rem"
+                        android:text="备注"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <EditText
+                        android:id="@+id/edit_only_rem"
+                        android:inputType="text"
+                        android:layout_width="0dp"
+                        android:minWidth="80dp"
+                        android:maxWidth="100dp"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:imeOptions="actionSearch"
+                        android:textIsSelectable="false"
+                        android:layout_weight="1"/>
+
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_columnWeight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/label_print_jk"
+                        android:text="缴库模版"
+                        android:layout_marginRight="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <Spinner
+                        android:id="@+id/edit_print_jk"
+                        android:layout_width="0dp"
+                        android:minWidth="80dp"
+                        android:maxWidth="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_columnWeight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/label_print_back"
+                        android:text="退仓模版"
+                        android:layout_marginRight="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <Spinner
+                        android:id="@+id/edit_print_back"
+                        android:layout_width="0dp"
+                        android:minWidth="80dp"
+                        android:maxWidth="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_columnWeight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/label_qty"
+                        android:text="卷数"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <EditText
+                        android:id="@+id/edit_qty"
+                        android:inputType="numberDecimal"
+                        android:layout_width="0dp"
+                        android:minWidth="80dp"
+                        android:maxWidth="100dp"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:imeOptions="actionSearch"
+                        android:textIsSelectable="false"
+                        android:layout_weight="1"/>
+
+                </LinearLayout>
+
+            </TableRow>
+
+        </TableLayout>
 
         <LinearLayout
             android:orientation="vertical"
@@ -533,6 +586,14 @@
                 android:layout_marginTop="5dp"
                 android:id="@+id/Do_BACK_WH5"
                 android:text="退淋涂"
+                android:padding="0dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:layout_marginTop="5dp"
+                android:id="@+id/Show_HistoryJL"
+                android:text="历史"
                 android:padding="0dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />

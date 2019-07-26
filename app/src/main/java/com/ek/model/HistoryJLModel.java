@@ -1,6 +1,6 @@
 package com.ek.model;
 
 public class HistoryJLModel {
-    public Boolean isNew;
+    public boolean isNew;
     public String showMsg ;
 }

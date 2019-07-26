@@ -1,6 +1,7 @@
 package com.ek;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,7 +21,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,8 +38,8 @@ import okhttp3.Response;
 public class SelectSOItemActivity extends AppCompatActivity implements View.OnClickListener{
 
     public static final int SELECTED_COMPLETE = 1;
-    EditText edit_prd_no;
-    EditText edit_Z_work_no;
+    EditText edit_prd_no, edit_Z_work_no, edit_so_no;
+
     SOLineListAdapter adapter;
     OkHttpClient client;
     @Override
@@ -49,6 +52,7 @@ public class SelectSOItemActivity extends AppCompatActivity implements View.OnCl
         btn.setOnClickListener(this);
         btnOk.setOnClickListener(this);
 
+        edit_so_no = findViewById(R.id.edit_so_no);
         edit_prd_no = findViewById(R.id.edit_prd_no);
         edit_Z_work_no = findViewById(R.id.edit_Z_work_no);
 
@@ -111,17 +115,42 @@ public class SelectSOItemActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
+    String GetLast6MonthDateString()
+    {
+        //Time t= new Time("GMT+8");
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -6);
+
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        Calendar calendar2 = Calendar.getInstance();
+        int year2 = calendar2.get(Calendar.YEAR);
+        int month2 = calendar2.get(Calendar.MONTH) + 1;
+        int day2 = calendar2.get(Calendar.DAY_OF_MONTH);
+
+        String str = year + "-" + month + "-" + day + "~" + year2 + "-" + month2 + "-" + day2;
+        return  str;
+    }
+
     void LoadSOLine()
     {
         String prd_no = edit_prd_no.getText().toString();
         String z_work_no = edit_Z_work_no.getText().toString();
+        String so_no = edit_so_no.getText().toString();
 
         HashMap<String,String> paramsMap=new HashMap<>();
         paramsMap.put("NowLoginId", MainActivity.current_login_id);
         paramsMap.put("NowUnderPassKey", MainActivity.current_NowUnderPassKey);
         paramsMap.put("action","GetTableBodyListAfterCheck");
-        paramsMap.put("so_no","");
-        //paramsMap.put("so_dd", "2019-01-01~2019-06-30" );
+        paramsMap.put("so_no", so_no);
+
+
+        //Toast.makeText(getApplicationContext(),, Toast.LENGTH_LONG);
+        Log.d("GetLast6MonthDateString", GetLast6MonthDateString());
+
+        paramsMap.put("so_dd", GetLast6MonthDateString()); //
         paramsMap.put("finish_sa", "F");
         paramsMap.put("Z_work_no", z_work_no);
         paramsMap.put("prd_no", prd_no);
@@ -181,6 +210,17 @@ public class SelectSOItemActivity extends AppCompatActivity implements View.OnCl
                 });
             }
         });
+    }
+
+
+    protected void onResume() {
+        /**
+         * 设置为横屏
+         */
+        if(getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+        super.onResume();
     }
 
 }

@@ -2,4 +2,6 @@
     <string name="app_name">ek</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_jk__so">生产机台-规格</string>
+    <string name="title_activity_history_jl">历史卷料</string>
+    <string name="title_activity_show_history_only">ShowHistoryOnlyActivity</string>
 </resources>

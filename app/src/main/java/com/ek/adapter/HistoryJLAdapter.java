@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.ek.R;
 import com.ek.model.HistoryJLModel;
+import com.ek.model.OnlyNoItem;
 
 import java.util.List;
 
@@ -98,7 +99,7 @@ public class HistoryJLAdapter extends BaseAdapter {
         TextView text;
 
         ViewHolder(View view) {
-            text = (TextView) view.findViewById(R.id.label_text);
+            text = (TextView) view.findViewById(R.id.listView);
         }
     }
 }

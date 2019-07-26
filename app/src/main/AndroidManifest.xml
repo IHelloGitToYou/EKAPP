@@ -27,6 +27,14 @@
             android:name=".JK_SOActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".SelectSOItemActivity" />
+        <activity
+            android:name=".HistoryJLActivity"
+            android:label="@string/title_activity_history_jl"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ShowHistoryOnlyActivity"
+            android:label="@string/title_activity_show_history_only"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

@@ -1,20 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
     android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SelectSOItemActivity">
-
+    android:descendantFocusability="blocksDescendants"
+    >
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <CheckBox
+            android:text="缴库"
+            android:id="@+id/edit_show_jk"
+            android:layout_marginRight="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+             android:checked="true"/>
         <TextView
             android:text="销售单号"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -25,28 +32,24 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:singleLine="true"
-            android:imeOptions="actionSearch"
             android:textIsSelectable="false"/>
 
         <TextView
             android:text="内部单号"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-
         <EditText
             android:id="@+id/edit_Z_work_no"
             android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:singleLine="true"
-            android:imeOptions="actionSearch"
-            android:textIsSelectable="false"/>
+            android:singleLine="true" />
 
         <TextView
             android:text="货号"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -56,9 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:singleLine="true"
-            android:imeOptions="actionSearch"
-            android:textIsSelectable="false"/>
+            android:singleLine="true" />
 
         <Button
             android:id="@+id/btn_search"
@@ -74,10 +75,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"></ListView>
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="45dp">
     <Button
-        android:id="@+id/btn_ok"
-        android:text="确定"
+        android:id="@+id/btn_delete"
+        android:text="删除"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent" />
+    <Button
+        android:id="@+id/btn_update"
+        android:text="修改补打"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
+
+    </LinearLayout>
 
 </LinearLayout>
