@@ -19,7 +19,7 @@
     <TextView
         android:id="@+id/label_Z_work_no"
         android:layout_width="0dp"
-        android:layout_height="45dp"
+        android:layout_height="35dp"
         android:background="#fff"
         android:layout_marginLeft="3dp"
         android:layout_weight="1" />
@@ -27,7 +27,7 @@
     <TextView
         android:id="@+id/label_prd_no"
         android:layout_width="0dp"
-        android:layout_height="45dp"
+        android:layout_height="35dp"
         android:background="#fff"
         android:layout_marginLeft="4dp"
         android:layout_weight="1" />
@@ -35,7 +35,7 @@
     <TextView
         android:id="@+id/label_FD_width"
         android:layout_width="0dp"
-        android:layout_height="45dp"
+        android:layout_height="35dp"
         android:background="#fff"
         android:layout_marginLeft="5dp"
         android:layout_weight="1"  />
@@ -43,7 +43,7 @@
     <TextView
         android:id="@+id/label_FD_core"
         android:layout_width="0dp"
-        android:layout_height="45dp"
+        android:layout_height="35dp"
         android:background="#fff"
         android:layout_marginLeft="6dp"
         android:layout_weight="1"  />
@@ -51,7 +51,7 @@
     <TextView
         android:id="@+id/label_so_no"
         android:layout_width="0dp"
-        android:layout_height="45dp"
+        android:layout_height="35dp"
         android:background="#fff"
         android:layout_marginLeft="7dp"
         android:layout_weight="1"  />
@@ -59,7 +59,7 @@
     <TextView
         android:id="@+id/label_show_qty"
         android:layout_width="0dp"
-        android:layout_height="45dp"
+        android:layout_height="35dp"
         android:background="#fff"
         android:layout_marginLeft="8dp"
         android:layout_weight="1"  />
@@ -67,7 +67,7 @@
     <TextView
         android:id="@+id/label_Z_print"
         android:layout_width="0dp"
-        android:layout_height="45dp"
+        android:layout_height="35dp"
         android:background="#fff"
         android:layout_marginLeft="9dp"
         android:layout_weight="1"  />

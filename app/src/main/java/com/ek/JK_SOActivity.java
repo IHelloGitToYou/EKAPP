@@ -2,6 +2,7 @@ package com.ek;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -30,6 +31,7 @@ import com.ek.model.PrintorModel;
 import com.ek.model.SelectSoLineModel;
 import com.ek.model.WHInfoModel;
 import com.google.gson.Gson;
+import com.google.gson.JsonDeserializationContext;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -138,6 +140,15 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
             }
         });
 
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view,  int position, long id) {
+                final int  position2 = position;
+                showDeleteSolineMenu(position2);
+                return false;
+            }
+        });
+
 
         edit_Z_work_no = findViewById(R.id.edit_Z_work_no);
         edit_prd_no = findViewById(R.id.edit_prd_no);
@@ -206,6 +217,8 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
         loadPrintotr();
 
         listenOnlyNoChange();
+
+        getSoLineToShareP();
     }
 
     private  void setMachines(){
@@ -223,6 +236,15 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
         spinnerMachineAdapter = new ArrayAdapter<>(this,
                 R.layout.support_simple_spinner_dropdown_item, machineItems);
         edit_machine.setAdapter(spinnerMachineAdapter);
+
+        edit_machine.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                getSoLineToShareP();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {            }
+        });
     }
 
     private void listenOnlyNoChange(){
@@ -517,6 +539,7 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
                             if(model.result ==  true) {
                                 Toast.makeText(getApplicationContext(), String.format("缴卷成功!" + newNo+' ' + model.qty), Toast.LENGTH_LONG).show();
                                 afterDoDk(paramsMap, newNo, model);
+
                             }
                             else{
                                 Toast.makeText(getApplicationContext(),String.format("缴卷失败:"+ model.msg), Toast.LENGTH_LONG).show();
@@ -532,8 +555,12 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private  void afterDoDk(HashMap<String,String> paramsMap, String newNo, NormalResult model){
+        rembSoLineToShareP();
+
+        //paramsMap.put("only_rem", LoginActivity.CommonUrlEncode( edit_only_rem.getText().toString())) ;
+        //paramsMap.put("Z_iface",LoginActivity.CommonUrlEncode( edit_Z_iface.getText().toString()));
         paramsMap.put("only_rem",edit_only_rem.getText().toString() + WebApi.Utf8_Split);
-        paramsMap.put("Z_iface",edit_Z_iface.getText().toString()+ WebApi.Utf8_Split);
+        paramsMap.put("Z_iface",edit_only_rem.getText().toString() + WebApi.Utf8_Split);
 
         //更新订单行上的
         final SelectSoLineModel line = (SelectSoLineModel) adapter.GetSelecteted();
@@ -646,8 +673,12 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
 
 
     private  void afterDoBack(HashMap<String,String> paramsMap, String newNo, String wh_no){
+        rembSoLineToShareP();
+
+        //paramsMap.put("only_rem", LoginActivity.CommonUrlEncode( edit_only_rem.getText().toString()));
+        //paramsMap.put("Z_iface",LoginActivity.CommonUrlEncode( edit_Z_iface.getText().toString()));
         paramsMap.put("only_rem",edit_only_rem.getText().toString() + WebApi.Utf8_Split);
-        paramsMap.put("Z_iface",edit_Z_iface.getText().toString()+ WebApi.Utf8_Split);
+        paramsMap.put("Z_iface",edit_only_rem.getText().toString() + WebApi.Utf8_Split);
 
         //更新订单行上的
         final SelectSoLineModel line = (SelectSoLineModel) adapter.GetSelecteted();
@@ -710,11 +741,15 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
                     doBackBefore("WH4","");
                 break;
             case R.id.Do_BACK_WH5:
-                Clicking = true;
+                    Clicking = true;
                     doBackBefore("WH5","");
+                 break;
             case R.id.Show_HistoryJL://历史
                 //弹出新的UI 加入查询条件？  //显示JLLiveView,
-                startActivityForResult(new Intent(this, ShowHistoryOnlyActivity.class), ShowHistoryOnlyActivity.SELECTED_COMPLETE );
+                Intent nIntent = new Intent(this, ShowHistoryOnlyActivity.class);
+                final WHInfoModel machineNumber = (WHInfoModel)edit_machine.getSelectedItem();
+                nIntent.putExtra("defaultMachine", machineNumber.name);
+                startActivityForResult(nIntent, ShowHistoryOnlyActivity.SELECTED_COMPLETE );
                 // 进行处理
                 // 修改
                 // 删除
@@ -788,7 +823,6 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
     //////////////////以下是工具类
     //打印卷料
     protected void doPrintJL(String printor, String printModel, HashMap<String,String> paramsJL )  {
-
         paramsJL.put("CONN", "StarEK");
         paramsJL.put("action", "PrintJLByAndroid");         //new String(b, "GB2312")
         paramsJL.put("printor", printor + WebApi.Utf8_Split); //
@@ -843,30 +877,109 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         //处理返回的数据 [增加订单规格] 返回的
-        if(requestCode == SelectSOItemActivity.SELECTED_COMPLETE){
+        if(requestCode == SelectSOItemActivity.SELECTED_COMPLETE && data != null){
             List<SelectSoLineModel> list = (List<SelectSoLineModel>)data.getSerializableExtra("SoItems");
             for (int i = 0; i < list.size(); i++) {
                 list.get(i).isSelected = false;
                 adapter.add(list.get(i));
             }
+
+            rembSoLineToShareP();
         }
 
         //历史卷料 返回 （可能是修改回来）
-
-
         super.onActivityResult(requestCode, resultCode, data);
-
-
     }
 
-    private Double getDouble(String s){
+
+    public void rembSoLineToShareP(){
+        Gson gson = new Gson();
+        List<SelectSoLineModel> lines = adapter.getList();
+        String json =  gson.toJson(lines);
+        final WHInfoModel machineNumber = (WHInfoModel)edit_machine.getSelectedItem();
+        String machine  = machineNumber.name;
+
+
+        SharedPreferences sp = getSharedPreferences("MachineSOLine", MODE_PRIVATE);
+        SharedPreferences.Editor spEditor = sp.edit();
+        spEditor.putString(machine, json);
+        spEditor.commit();
+    }
+
+    public void getSoLineToShareP(){
+        //List<SelectSoLineModel> lines = new List<SelectSoLineModel>();
+        final WHInfoModel machineNumber = (WHInfoModel)edit_machine.getSelectedItem();
+        String machine  = machineNumber.name;
+        SharedPreferences sp = getSharedPreferences("MachineSOLine", MODE_PRIVATE);
+        if(sp.contains(machine)){
+            Gson gson = new Gson();
+            SelectSoLineModel[] lastSoLines =  gson.fromJson(sp.getString(machine, "[]"),SelectSoLineModel[].class);
+            //return lines;
+            //SelectSoLineModel[] lastSoLines = getSoLineToShareP();
+            adapter.removeAll();
+            if(lastSoLines!= null) {
+                for (int i = 0; (i < lastSoLines.length); i++) {
+                    adapter.add(lastSoLines[i]);
+                }
+                adapter.notifyDataSetChanged();
+            }
+        }
+        else {
+            adapter.removeAll();
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    public void showDeleteSolineMenu(final int position2) {
+        String[] menuText = {"删除"};
+        android.support.v7.app.AlertDialog.Builder dialog = new android.support.v7.app.AlertDialog.Builder(this);
+        dialog.setItems(menuText, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                if (arg1 == 0) {
+                    android.support.v7.app.AlertDialog.Builder bulDelete = new android.support.v7.app.AlertDialog.Builder(JK_SOActivity.this);
+                    bulDelete.setTitle("删除规则");
+                    bulDelete.setMessage(String.format(String.format("确定要删除规则吗？")));
+
+                    bulDelete.setPositiveButton("删吧", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            SelectSoLineModel model = (SelectSoLineModel) adapter.getItem(position2);
+                            if (model != null)
+                                adapter.remove(model);
+
+                            rembSoLineToShareP();
+                            dialog.dismiss();
+                        }
+                    });
+
+                    bulDelete.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    bulDelete.show();
+                }
+                arg0.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+
+    public static Double getDouble(String s){
         if(s.isEmpty())
             return 0.0;
+        double d = 0.0;
+        try {
+            d = Double.parseDouble(s);
+        }
+        catch (Exception e){
+            d= 0.0;
+        }
 
-        return Double.parseDouble(s);
+        return d;
     }
 
-    private Integer getInt(String s){
+    public static Integer getInt(String s){
         if(s.isEmpty())
             return 0;
 

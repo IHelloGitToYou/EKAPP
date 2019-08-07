@@ -34,6 +34,14 @@
         <activity
             android:name=".ShowHistoryOnlyActivity"
             android:label="@string/title_activity_show_history_only"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".edit_jl_activity"
+            android:label="@string/title_activity_edit_jl_activity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SettingActivity"
+            android:label="@string/title_activity_setting"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

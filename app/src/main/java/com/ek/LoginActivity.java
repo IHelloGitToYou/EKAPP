@@ -1,8 +1,10 @@
 package com.ek;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,6 +14,8 @@ import com.ek.model.DbInfo;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 
 import okhttp3.Call;
@@ -41,6 +45,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         btn_login.setOnClickListener(this);
         client = new OkHttpClient();
+
+        SharedPreferences sp = getSharedPreferences("LoginActivity", MODE_PRIVATE);
+        SharedPreferences.Editor spEditor =sp.edit();
+
+        edit_user.setText( sp.getString("LoginUSER", "0000").toString());
+        edit_ps.setText( sp.getString("LoginPS", "2").toString());
     }
 
     @Override
@@ -96,6 +106,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                SharedPreferences sp = getSharedPreferences("LoginActivity", MODE_PRIVATE);
+                                SharedPreferences.Editor spEditor =sp.edit();
+
+                                spEditor.putString("LoginUSER", sal_no);
+                                spEditor.putString("LoginPS", edit_ps.getText().toString());
+                                spEditor.commit();
+
                                 //Toast.makeText(getApplicationContext(), dbInfos[0].db_name, Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                 intent.putExtra(SENT_SAL_NO_MESSAGE, sal_no);
@@ -118,5 +135,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
+    public static String CommonUrlEncode(String str){
+        String strEncode = "";
+        try {
+            strEncode = URLEncoder.encode(str, "UTF-8");
+           // Log.d("URL", );
+        } catch (UnsupportedEncodingException e) {
+            Log.d("URL_错了",  str);
+            strEncode = str;
+        }
+
+        return  strEncode;
+    }
 
 }

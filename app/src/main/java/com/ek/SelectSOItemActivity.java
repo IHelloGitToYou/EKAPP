@@ -55,6 +55,7 @@ public class SelectSOItemActivity extends AppCompatActivity implements View.OnCl
         edit_so_no = findViewById(R.id.edit_so_no);
         edit_prd_no = findViewById(R.id.edit_prd_no);
         edit_Z_work_no = findViewById(R.id.edit_Z_work_no);
+        //edit_Z_work_no.setFocusable(true);
 
         client = new OkHttpClient();
         adapter = new SOLineListAdapter(new ArrayList<SelectSoLineModel>());

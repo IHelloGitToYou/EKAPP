@@ -6,7 +6,7 @@ public class OnlyNoItem {
     public  String prd_no;
     public String only_no;
     public String wh_no;
-    public Boolean is_multi;
+    public String is_multi;
     public Double FD_width;
     public Double FD_length;
     public Double FD_core;
@@ -21,6 +21,10 @@ public class OnlyNoItem {
 
     public Integer qty;
     public Double qty1;
+
+    public String Z_iface;
+    public String machine;
+    public String only_rem;
   //显示订单信息
     public String lock_table_id;
     public String lock_table_no;

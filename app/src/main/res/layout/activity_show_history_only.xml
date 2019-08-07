@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:descendantFocusability="blocksDescendants"
     >
     <LinearLayout
         android:orientation="horizontal"
@@ -19,6 +18,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
              android:checked="true"/>
+
+        <TextView
+            android:text="机台号："
+            android:layout_marginRight="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Spinner
+            android:id="@+id/edit_machine"
+            android:layout_weight="1"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:imeOptions="actionSearch"
+            android:textIsSelectable="false"/>
+
         <TextView
             android:text="销售单号"
             android:layout_marginRight="10dp"
@@ -29,10 +44,11 @@
             android:id="@+id/edit_so_no"
             android:layout_weight="1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:maxLines="1"
             android:singleLine="true"
-            android:textIsSelectable="false"/>
+            android:minWidth="80dp"
+            android:maxWidth="100dp"/>
 
         <TextView
             android:text="内部单号"
@@ -43,7 +59,9 @@
             android:id="@+id/edit_Z_work_no"
             android:layout_weight="1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:minWidth="80dp"
+            android:maxWidth="100dp"
             android:maxLines="1"
             android:singleLine="true" />
 
@@ -57,7 +75,24 @@
             android:id="@+id/edit_prd_no"
             android:layout_weight="1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:minWidth="80dp"
+            android:maxWidth="100dp"
+            android:maxLines="1"
+            android:singleLine="true" />
+        <TextView
+            android:text="人员"
+            android:layout_marginRight="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/edit_sal_no"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:minWidth="80dp"
+            android:maxWidth="100dp"
             android:maxLines="1"
             android:singleLine="true" />
 
@@ -82,11 +117,13 @@
     <Button
         android:id="@+id/btn_delete"
         android:text="删除"
+        android:layout_marginLeft="20dp"
         android:layout_width="wrap_content"
         android:layout_height="match_parent" />
     <Button
         android:id="@+id/btn_update"
         android:text="修改补打"
+        android:layout_marginLeft="100dp"
         android:layout_width="wrap_content"
         android:layout_height="match_parent" />
 

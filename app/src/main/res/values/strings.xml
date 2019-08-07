@@ -4,4 +4,6 @@
     <string name="title_activity_jk__so">生产机台-规格</string>
     <string name="title_activity_history_jl">历史卷料</string>
     <string name="title_activity_show_history_only">ShowHistoryOnlyActivity</string>
+    <string name="title_activity_edit_jl_activity">修改卷料</string>
+    <string name="title_activity_setting">SettingActivity</string>
 </resources>

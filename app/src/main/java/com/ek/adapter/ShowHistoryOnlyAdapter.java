@@ -69,6 +69,7 @@ public class ShowHistoryOnlyAdapter extends BaseAdapter {
     public void setSelctItem(int position) {
         for (int i = 0; i < list.size(); i++) {
             list.get(i).isSelected = false;
+            notifyDataSetChanged();
         }
         list.get(position).isSelected= true;
         notifyDataSetChanged();
@@ -100,10 +101,14 @@ public class ShowHistoryOnlyAdapter extends BaseAdapter {
 
         if (list.get(position).isSelected ) {
             holder.label_only_no.setBackgroundColor(Color.rgb(0, 250, 20));
+            holder.label_prd_no.setBackgroundColor(Color.rgb(0, 250, 20));
+            holder.label_FD_width.setBackgroundColor(Color.rgb(0, 250, 20));
         }
         else
         {
             holder.label_only_no.setBackgroundColor(Color.rgb(255, 255, 255));
+            holder.label_prd_no.setBackgroundColor(Color.rgb(255, 255, 255));
+            holder.label_FD_width.setBackgroundColor(Color.rgb(255, 255, 255));
         }
 
         holder.label_only_no.setText(list.get(position).only_no);
