@@ -62,6 +62,10 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
     ArrayAdapter<WHInfoModel> spinnerMachineAdapter;
     EditText edit_prd_no, edit_Z_work_no, edit_so_no ,edit_sal_no;
     CheckBox edit_show_jk;
+
+     EditText FD_width_win, FD_length_win,edit_Z_core_kg_win, edit_Z_kg_win, edit_qty1_win,edit_qty_win, edit_only_rem_win;
+     Spinner edit_print_jk_win,edit_printor_jk_win;
+     CheckBox edit_is_multi_win;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,9 +106,13 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
 
         String defaultMachine = getIntent().getStringExtra("defaultMachine");
         setSpinnerWHValue(edit_machine, defaultMachine);
-
+        edit_sal_no.setText(MainActivity.current_sal_no);
         //this.edit_show_jk.setOnCheckedChangeListener(new OnCheckedChangeListenerImpl());
     }
+
+
+
+
 
 
 
@@ -146,10 +154,6 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
         cDialog.setView(cView);
         cDialog.setCancelable(true);
 
-        final EditText FD_width_win, FD_length_win,edit_Z_core_kg_win, edit_Z_kg_win, edit_qty1_win,edit_qty_win;
-        final Spinner edit_print_jk_win,edit_printor_jk_win;
-        final CheckBox edit_is_multi_win;
-
         FD_width_win = cView.findViewById(R.id.edit_FD_width);
         FD_length_win = cView.findViewById(R.id.edit_FD_length);
         edit_Z_core_kg_win = cView.findViewById(R.id.edit_Z_core_kg);
@@ -159,6 +163,7 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
         edit_printor_jk_win = cView.findViewById(R.id.edit_printor_jk);
         edit_is_multi_win = cView.findViewById(R.id.edit_is_multi);
         edit_qty_win = cView.findViewById(R.id.edit_qty);
+        edit_only_rem_win = cView.findViewById(R.id.edit_only_rem);
 
         FD_width_win.setText(JK_SOActivity.getInt(currentOnly.FD_width.toString())+ "");
         FD_length_win.setText(currentOnly.FD_length + "");
@@ -170,6 +175,7 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
 
         edit_qty_win.setText(JK_SOActivity.getInt(currentOnly.qty.toString())+ "");
         edit_qty1_win.setText(JK_SOActivity.getDouble(currentOnly.qty1.toString())+ "");
+        edit_only_rem_win.setText(currentOnly.only_rem);
 
         if(edit_show_jk.isChecked())
             loadPrintorModels("JLIN", edit_print_jk_win);
@@ -190,6 +196,7 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
                 Double  z_kg = JK_SOActivity.getDouble( edit_Z_kg_win.getText().toString());
                 Double  qty1 = JK_SOActivity.getDouble( edit_qty1_win.getText().toString());
                 Integer  qty = JK_SOActivity.getInt( edit_qty_win.getText().toString());
+                String  only_rem = edit_only_rem_win.getText().toString();
                 boolean isMulti = edit_is_multi_win.isChecked();
 
                 if(isMulti == true && edit_qty_win.getText().toString().isEmpty())
@@ -207,7 +214,7 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
 
                 if(Clicking) return;
                 Clicking = true;
-                doEditApi(width, length, z_core_kg, z_kg, qty1, qty, isMulti, dialog);
+                doEditApi(width, length, z_core_kg, z_kg, qty1, qty, isMulti,only_rem, dialog);
             }
         });
 
@@ -228,7 +235,6 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
                     HashMap<String,String> paramsMap = getPrintJLParams();
                     doPrintJL(printor.name, printModel.name, paramsMap, dialog);
                 }
-
             }
         });
 
@@ -315,13 +321,16 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
 
         paramsJL.put("CONN", "StarEK");
         paramsJL.put("action", "PrintJLByAndroid");         //new String(b, "GB2312")
-        paramsJL.put("printor", printor + WebApi.Utf8_Split); //
-        paramsJL.put("print", printModel + WebApi.Utf8_Split);
-        paramsJL.put("only_rem",  currentOnly.only_rem + WebApi.Utf8_Split);
-        paramsJL.put("Z_iface",currentOnly.Z_iface+ WebApi.Utf8_Split);
+        paramsJL.put("only_rem", LoginActivity.CommonUrlEncode( currentOnly.only_rem )) ;
+        paramsJL.put("Z_iface",LoginActivity.CommonUrlEncode( currentOnly.Z_iface));
 
-        //
+        paramsJL.put("printor", LoginActivity.CommonUrlEncode( printor)); //
+        paramsJL.put("print", LoginActivity.CommonUrlEncode( printModel));
 
+//        paramsJL.put("printor", printor + WebApi.Utf8_Split); //
+//        paramsJL.put("print", printModel + WebApi.Utf8_Split);
+//        paramsJL.put("only_rem",  currentOnly.only_rem + WebApi.Utf8_Split);
+//        paramsJL.put("Z_iface",currentOnly.Z_iface+ WebApi.Utf8_Split);
 
         HttpUrl.Builder builder = new HttpUrl.Builder()
                 .scheme("http")
@@ -336,10 +345,12 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
 
         HttpUrl url = builder.build();
         Request request = new Request.Builder()
-                //.addHeader("content-type", "application/x-www-form-urlencoded;charset=gb2312")
+                .addHeader("content-type", "application/x-www-form-urlencoded;charset=utf-8")
                 .url(url)
                 .get()
                 .build();
+
+
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -374,7 +385,15 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
 
     }
 
-    void doEditApi(Integer width , Integer length, Double  z_core_kg , Double  z_kg,Double qty1, Integer  qty, boolean isMulti, final DialogInterface dialog){
+    void doEditApi(final Integer width,
+                   final Integer length,
+                   final Double  z_core_kg ,
+                   final Double  z_kg, final Double qty1,
+                   final Integer  qty,
+                   final boolean isMulti,
+                   final String only_rem,
+                   final DialogInterface dialog
+                   ){
         HashMap<String,String> paramsMap = new HashMap<>();
         paramsMap.put("NowLoginId", MainActivity.current_login_id);
         paramsMap.put("NowUnderPassKey", MainActivity.current_NowUnderPassKey);
@@ -401,28 +420,32 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
         if(isMulti)
             paramsMap.put("is_multi", "on");
 
+        if(currentOnly.qty >= JK_SOActivity.NumberOfBackToSoLine)
+            paramsMap.put("isJKIgnore", "true");
+
         paramsMap.put("qty", qty + "");
         paramsMap.put("qty1",qty1 + "");
 
         paramsMap.put("Z_kg",z_kg + "");
         paramsMap.put("wh_no",currentOnly.wh_no);
-        paramsMap.put("only_rem",currentOnly.only_rem.toString());
+        paramsMap.put("only_rem", only_rem);
         paramsMap.put("Z_iface",currentOnly.Z_iface.toString());
 
         paramsMap.put("Z_work_no",edit_Z_work_no.getText().toString());
 
-        paramsMap.put("so_id",currentOnly.lock_table_id);
-        paramsMap.put("so_no",currentOnly.lock_table_no);
+        paramsMap.put("so_id",currentOnly.lock_table_id+ "");
+        paramsMap.put("so_no",currentOnly.lock_table_no+ "");
         paramsMap.put("itm", currentOnly.lock_table_itm + "");
 
-        paramsMap.put("lock_table_id",currentOnly.lock_table_id);
-        paramsMap.put("lock_table_no",currentOnly.lock_table_no);
-        paramsMap.put("lock_table_itm",currentOnly.lock_table_itm);
+        paramsMap.put("lock_table_id",currentOnly.lock_table_id+ "");
+        paramsMap.put("lock_table_no", currentOnly.lock_table_no+ "");
+        paramsMap.put("lock_table_itm",currentOnly.lock_table_itm+ "");
 
         FormBody.Builder builder = new FormBody.Builder();
         for (String key : paramsMap.keySet()) {
             builder.add(key, paramsMap.get(key));
         }
+
         Request request = new Request.Builder()
                 .url(WebApi.getRealUrl(WebApi.URL_EKJOB))
                 .post(builder.build())
@@ -438,15 +461,16 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
                         holdDialog(dialog, false);
                         Toast.makeText(getApplicationContext(),String.format("修改卷料失败!"), Toast.LENGTH_SHORT).show(); }});
             }
+
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                Clicking = false;
                 final String respTxt =  response.body().string();
                 Gson gson = new Gson();
                 final NormalResult model = gson.fromJson(respTxt, NormalResult.class);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Clicking = false;
                         if (model != null )
                         {
                             if(model.result ==  true) {
@@ -454,6 +478,20 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
                                 Toast.makeText(getApplicationContext(), String.format("修改卷料成功!"), Toast.LENGTH_LONG).show();
                                 holdDialog(dialog, true);
                                 dialog.dismiss();
+
+                                currentOnly.FD_width = Double.parseDouble( width + "");
+                                currentOnly.FD_length = Double.parseDouble( length + "");
+                                currentOnly.Z_core_kg =z_core_kg;
+                                currentOnly.Z_kg = z_kg;
+                                currentOnly.qty1 = qty1;
+                                currentOnly.qty = qty;
+                                if(isMulti)
+                                    currentOnly.is_multi = "T";
+                                else
+                                    currentOnly.is_multi = "F";
+
+                                currentOnly.only_rem = only_rem;
+                                adapter.notifyDataSetChanged();
                             }
                             else{
                                 holdDialog(dialog, false);
@@ -468,6 +506,16 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
                 });
             }
         });
+    }
+
+    void doRessetViewLine(){
+       //        Integer length,
+//        Double  z_core_kg ,
+//        Double  z_kg,Double qty1,
+//                Integer  qty,
+//        boolean isMulti,
+//        String only_rem,
+
     }
 
     void editChangeListen(final EditText edit_Z_core_kg ,final EditText edit_Z_kg, final EditText edit_qty1){
@@ -522,6 +570,7 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
 
     void LoadData()
     {
+        adapter.removeAll();
 //        string machine = Request["machine"];
 //        string Z_work_no = Request["Z_work_no"];
 //        string FD_width = Request["FD_width"];
@@ -582,16 +631,20 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
             public void onResponse(Call call, Response response) throws IOException {
                 final String respTxt =  response.body().string();
                 Gson gson = new Gson();
-                //Log.d("gson", respTxt);
+                Log.d("gson", respTxt);
                 try {
                     final OnlyNoItem[] onlys = gson.fromJson(respTxt, OnlyNoItem[].class);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            adapter.removeAll();
+
                             if (onlys != null && onlys.length>0)
                             {
                                 for(int i = 0; i<onlys.length; ++i) {
+                                    if(onlys[i].lock_table_id == null)  onlys[i].lock_table_id = "";
+                                    if(onlys[i].lock_table_no == null)  onlys[i].lock_table_no = "";
+                                    if(onlys[i].lock_table_itm == null)  onlys[i].lock_table_itm = "";
+
                                     adapter.add(onlys[i]);
                                 }
                             }
@@ -719,7 +772,7 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(),String.format("加载模版出错"), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),String.format("加载模版出错"), Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -727,17 +780,22 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String respTxt =  response.body().string();
-                Gson gson = new Gson();
-                final PrintorModel[] models = gson.fromJson(respTxt, PrintorModel[].class);
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (models != null )
-                        {
-                            ArrayAdapter<PrintorModel> spinnerAdapter = new ArrayAdapter<PrintorModel>(getApplicationContext(),
-                                    R.layout.support_simple_spinner_dropdown_item, models);
+                        try {
+                            Gson gson = new Gson();
+                            final PrintorModel[] models = gson.fromJson(respTxt, PrintorModel[].class);
+                            if (models != null) {
+                                ArrayAdapter<PrintorModel> spinnerAdapter = new ArrayAdapter<PrintorModel>(getApplicationContext(),
+                                        R.layout.support_simple_spinner_dropdown_item, models);
 
-                            edit_print.setAdapter(spinnerAdapter);
+                                edit_print.setAdapter(spinnerAdapter);
+                            }
+                        }
+                        catch ( Exception e){
+                            Toast.makeText(getApplicationContext(),String.format("加载模版出错"), Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -770,17 +828,22 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String respTxt =  response.body().string();
-                Gson gson = new Gson();
-                final PrintorModel[] models = gson.fromJson(respTxt, PrintorModel[].class);
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //Toast.makeText(getApplicationContext(), respTxt, Toast.LENGTH_LONG).show();
-                        if (models != null )
-                        {
-                            ArrayAdapter<PrintorModel> spinnerAdapter2 = new ArrayAdapter<PrintorModel>(getApplicationContext(),
-                                    R.layout.support_simple_spinner_dropdown_item, models);
-                            edit_printor.setAdapter(spinnerAdapter2);
+                        try {
+                            Gson gson = new Gson();
+                            final PrintorModel[] models = gson.fromJson(respTxt, PrintorModel[].class);
+                            //Toast.makeText(getApplicationContext(), respTxt, Toast.LENGTH_LONG).show();
+                            if (models != null) {
+                                ArrayAdapter<PrintorModel> spinnerAdapter2 = new ArrayAdapter<PrintorModel>(getApplicationContext(),
+                                        R.layout.support_simple_spinner_dropdown_item, models);
+                                edit_printor.setAdapter(spinnerAdapter2);
+                            }
+                        }
+                        catch (Exception e){
+                            Toast.makeText(getApplicationContext(), String.format("加载打印机出错"), Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -791,16 +854,27 @@ public class ShowHistoryOnlyActivity extends AppCompatActivity implements View.O
 
 
     private  void setMachines(){
-        WHInfoModel[] machineItems = new WHInfoModel[8];//{"A1","A2","A3","A4","A5","A6", "A7", "A8"};
+        WHInfoModel[] machineItems = new WHInfoModel[18];//{"A1","A2","A3","A4","A5","A6", "A7", "A8"};
         machineItems[0] = new WHInfoModel();machineItems[0].wh_no = "A1"; machineItems[0].name = "A1";
         machineItems[1] = new WHInfoModel();machineItems[1].wh_no = "A2"; machineItems[1].name = "A2";
         machineItems[2] = new WHInfoModel();machineItems[2].wh_no = "A3"; machineItems[2].name = "A3";
         machineItems[3] = new WHInfoModel();machineItems[3].wh_no = "A4"; machineItems[3].name = "A4";
         machineItems[4] = new WHInfoModel();machineItems[4].wh_no = "A5"; machineItems[4].name = "A5";
         machineItems[5] = new WHInfoModel();machineItems[5].wh_no = "A6"; machineItems[5].name = "A6";
-        machineItems[6] = new WHInfoModel();machineItems[6].wh_no = "A7"; machineItems[6].name = "A7";
-        machineItems[7] = new WHInfoModel();machineItems[7].wh_no = "A8"; machineItems[6].name = "A8";
 
+        machineItems[6] = new WHInfoModel();machineItems[6].wh_no = "A"; machineItems[6].name = "A";
+        machineItems[7] = new WHInfoModel();machineItems[7].wh_no = "B"; machineItems[7].name = "B";
+        machineItems[8] = new WHInfoModel();machineItems[8].wh_no = "C"; machineItems[8].name = "C";
+        machineItems[9] = new WHInfoModel();machineItems[9].wh_no = "D"; machineItems[9].name = "D";
+        machineItems[10] = new WHInfoModel();machineItems[10].wh_no = "E"; machineItems[10].name = "E";
+        machineItems[11] = new WHInfoModel();machineItems[11].wh_no = "F"; machineItems[11].name = "F";
+
+        machineItems[12] = new WHInfoModel();machineItems[12].wh_no = "B1"; machineItems[12].name = "B1";
+        machineItems[13] = new WHInfoModel();machineItems[13].wh_no = "B2"; machineItems[13].name = "B2";
+        machineItems[14] = new WHInfoModel();machineItems[14].wh_no = "B3"; machineItems[14].name = "B3";
+        machineItems[15] = new WHInfoModel();machineItems[15].wh_no = "B4"; machineItems[15].name = "B4";
+        machineItems[16] = new WHInfoModel();machineItems[16].wh_no = "B5"; machineItems[16].name = "B5";
+        machineItems[17] = new WHInfoModel();machineItems[17].wh_no = "B6"; machineItems[17].name = "B6";
 
         spinnerMachineAdapter = new ArrayAdapter<>(this,
                 R.layout.support_simple_spinner_dropdown_item, machineItems);

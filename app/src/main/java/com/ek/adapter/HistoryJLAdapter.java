@@ -29,6 +29,14 @@ public class HistoryJLAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public  void insert(HistoryJLModel item){
+        for (int i = 0; i < list.size(); i++) {
+            list.get(i).isNew = false;
+        }
+        list.add(0, item);
+        notifyDataSetChanged();
+    }
+
     public void add(Integer index, HistoryJLModel item)
     {
         for (int i = 0; i < list.size(); i++) {

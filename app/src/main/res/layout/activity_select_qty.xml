@@ -1,65 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="30dp"
-    tools:context=".SettingActivity">
+    tools:context=".Select_qty_Activity">
 
     <LinearLayout
-        android:background="#fff"
         android:orientation="horizontal"
-        android:layout_width="match_parent"
+        android:layout_columnWeight="1"
+        android:layout_weight="1"
+        android:layout_width="0dp"
         android:layout_height="wrap_content">
         <TextView
-            android:text="Web主网址："
-            android:layout_marginRight="20dp"
+            android:id="@+id/label_qty"
+            android:text="卷数："
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-
         <EditText
-            android:id="@+id/edit_WebHostUrl"
-            android:layout_weight="1"
+            android:id="@+id/edit_qty"
+            android:inputType="numberDecimal"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:minWidth="80dp"
+            android:maxWidth="100dp"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:imeOptions="actionSearch"
+            android:textIsSelectable="false"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_columnWeight="1"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/label_qty1"
+            android:text="净重："
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/edit_qty1"
+            android:inputType="numberDecimal"
+            android:layout_width="0dp"
+            android:minWidth="80dp"
+            android:maxWidth="100dp"
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:singleLine="true"
             android:imeOptions="actionSearch"
-            android:textIsSelectable="false"/>
-
+            android:textIsSelectable="false"
+            android:layout_weight="1"/>
     </LinearLayout>
-
-
-    <LinearLayout
-        android:background="#fff"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:text="打印机Ip："
-            android:layout_marginRight="20dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <EditText
-            android:id="@+id/edit_PrintIp"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:singleLine="true"
-
-            android:imeOptions="actionSearch"
-            android:textIsSelectable="false"/>
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/Btn_EditSetting"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:text="修改"/>
-
 </LinearLayout>

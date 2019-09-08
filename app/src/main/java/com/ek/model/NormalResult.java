@@ -8,4 +8,7 @@ public class NormalResult {
 
     public Integer qty; ///生成卷流水数字 使用
     public Double qty1; ///生成卷流水数字 使用
+    public String tz_no; //出库是返回 使用
+
+    public String old_Z_path; //上架是返回 使用
 }

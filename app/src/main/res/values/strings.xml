@@ -6,4 +6,5 @@
     <string name="title_activity_show_history_only">ShowHistoryOnlyActivity</string>
     <string name="title_activity_edit_jl_activity">修改卷料</string>
     <string name="title_activity_setting">SettingActivity</string>
+    <string name="title_activity_select_qty">activity_select_qty</string>
 </resources>

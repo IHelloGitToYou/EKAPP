@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,11 +28,13 @@ import com.ek.adapter.JK_solineAdapter;
 import com.ek.model.HistoryJLModel;
 import com.ek.model.NormalResult;
 import com.ek.model.OnlyNoItem;
+import com.ek.model.PageResultModel;
 import com.ek.model.PrintorModel;
 import com.ek.model.SelectSoLineModel;
 import com.ek.model.WHInfoModel;
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,6 +53,7 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
     JK_solineAdapter adapter;
     HistoryJLAdapter historyJLAdapter;
     ListView listView,listHistoryJL;
+    public static int NumberOfBackToSoLine = 9999;        //可把录入区的信息  回写到到订单 规格上的 约定数字
 
     EditText  edit_Z_top_no, edit_Z_hou3,edit_only_no,edit_prd_no_header;
 
@@ -222,15 +226,27 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private  void setMachines(){
-        WHInfoModel[] machineItems = new WHInfoModel[8];//{"A1","A2","A3","A4","A5","A6", "A7", "A8"};
+        WHInfoModel[] machineItems = new WHInfoModel[18];//{"A1","A2","A3","A4","A5","A6", "A7", "A8"};
         machineItems[0] = new WHInfoModel();machineItems[0].wh_no = "A1"; machineItems[0].name = "A1";
         machineItems[1] = new WHInfoModel();machineItems[1].wh_no = "A2"; machineItems[1].name = "A2";
         machineItems[2] = new WHInfoModel();machineItems[2].wh_no = "A3"; machineItems[2].name = "A3";
         machineItems[3] = new WHInfoModel();machineItems[3].wh_no = "A4"; machineItems[3].name = "A4";
         machineItems[4] = new WHInfoModel();machineItems[4].wh_no = "A5"; machineItems[4].name = "A5";
         machineItems[5] = new WHInfoModel();machineItems[5].wh_no = "A6"; machineItems[5].name = "A6";
-        machineItems[6] = new WHInfoModel();machineItems[6].wh_no = "A7"; machineItems[6].name = "A7";
-        machineItems[7] = new WHInfoModel();machineItems[7].wh_no = "A8"; machineItems[6].name = "A8";
+
+        machineItems[6] = new WHInfoModel();machineItems[6].wh_no = "A"; machineItems[6].name = "A";
+        machineItems[7] = new WHInfoModel();machineItems[7].wh_no = "B"; machineItems[7].name = "B";
+        machineItems[8] = new WHInfoModel();machineItems[8].wh_no = "C"; machineItems[8].name = "C";
+        machineItems[9] = new WHInfoModel();machineItems[9].wh_no = "D"; machineItems[9].name = "D";
+        machineItems[10] = new WHInfoModel();machineItems[10].wh_no = "E"; machineItems[10].name = "E";
+        machineItems[11] = new WHInfoModel();machineItems[11].wh_no = "F"; machineItems[11].name = "F";
+
+        machineItems[12] = new WHInfoModel();machineItems[12].wh_no = "B1"; machineItems[12].name = "B1";
+        machineItems[13] = new WHInfoModel();machineItems[13].wh_no = "B2"; machineItems[13].name = "B2";
+        machineItems[14] = new WHInfoModel();machineItems[14].wh_no = "B3"; machineItems[14].name = "B3";
+        machineItems[15] = new WHInfoModel();machineItems[15].wh_no = "B4"; machineItems[15].name = "B4";
+        machineItems[16] = new WHInfoModel();machineItems[16].wh_no = "B5"; machineItems[16].name = "B5";
+        machineItems[17] = new WHInfoModel();machineItems[17].wh_no = "B6"; machineItems[17].name = "B6";
 
 
         spinnerMachineAdapter = new ArrayAdapter<>(this,
@@ -509,6 +525,9 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
         paramsMap.put("lock_table_no", line.so_no);
         paramsMap.put("lock_table_itm",line.itm + "");
 
+        if(line.qty >= NumberOfBackToSoLine)
+            paramsMap.put("isJKIgnore", "true");
+
         FormBody.Builder builder = new FormBody.Builder();
         for (String key : paramsMap.keySet()) {
             builder.add(key, paramsMap.get(key));
@@ -555,17 +574,19 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private  void afterDoDk(HashMap<String,String> paramsMap, String newNo, NormalResult model){
-        rembSoLineToShareP();
 
-        //paramsMap.put("only_rem", LoginActivity.CommonUrlEncode( edit_only_rem.getText().toString())) ;
-        //paramsMap.put("Z_iface",LoginActivity.CommonUrlEncode( edit_Z_iface.getText().toString()));
-        paramsMap.put("only_rem",edit_only_rem.getText().toString() + WebApi.Utf8_Split);
-        paramsMap.put("Z_iface",edit_only_rem.getText().toString() + WebApi.Utf8_Split);
 
         //更新订单行上的
         final SelectSoLineModel line = (SelectSoLineModel) adapter.GetSelecteted();
         paramsMap.put("Z_hou3", line.Z_sale_hou3 + "");
         line.Z_core_kg = getDouble( edit_Z_core_kg.getText().toString());
+
+        /////可把录入区的信息  回写到到订单 规格上的 约定数字
+        if (line.qty >= NumberOfBackToSoLine){
+            line.prd_no = edit_prd_no_bottom.getText().toString();
+            line.FD_width = getInt( FD_width.getText().toString());
+            line.FD_length = getInt( FD_length.getText().toString());
+        }
 
         PrintorModel pJKModel = (PrintorModel) edit_print_jk.getSelectedItem();
         PrintorModel pBackModel = (PrintorModel) edit_print_back.getSelectedItem();
@@ -581,6 +602,10 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
         //edit_Z_core_kg.setText("");
         edit_qty1.setText("");
         edit_Z_kg.setText("");
+
+
+        rembSoLineToShareP();
+
 
         //插入到历史卷区
         String showText = newNo + " " +  paramsMap.get("FD_width") + "*"
@@ -756,6 +781,7 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
                 // 打印
                 //doBackBefore("WH5","");
                 break;
+
         }
 
 
@@ -825,8 +851,12 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
     protected void doPrintJL(String printor, String printModel, HashMap<String,String> paramsJL )  {
         paramsJL.put("CONN", "StarEK");
         paramsJL.put("action", "PrintJLByAndroid");         //new String(b, "GB2312")
-        paramsJL.put("printor", printor + WebApi.Utf8_Split); //
-        paramsJL.put("print", printModel + WebApi.Utf8_Split);
+
+        paramsJL.put("only_rem", LoginActivity.CommonUrlEncode( edit_only_rem.getText().toString())) ;
+        paramsJL.put("Z_iface",LoginActivity.CommonUrlEncode( edit_Z_iface.getText().toString()));
+
+        paramsJL.put("printor", LoginActivity.CommonUrlEncode( printor)); //
+        paramsJL.put("print", LoginActivity.CommonUrlEncode( printModel));
 
 
         HttpUrl.Builder builder = new HttpUrl.Builder()
@@ -842,7 +872,7 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
 
         HttpUrl url = builder.build();
         Request request = new Request.Builder()
-                .addHeader("content-type", "application/x-www-form-urlencoded;charset=gb2312")
+                .addHeader("content-type", "application/x-www-form-urlencoded;charset=utf-8")//utf-8 gb2312
                 .url(url)
                 .get()
                 .build();
@@ -888,6 +918,9 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
         }
 
         //历史卷料 返回 （可能是修改回来）
+        refreshSoLineFinishQty();
+
+
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -896,13 +929,21 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
         Gson gson = new Gson();
         List<SelectSoLineModel> lines = adapter.getList();
         String json =  gson.toJson(lines);
+
         final WHInfoModel machineNumber = (WHInfoModel)edit_machine.getSelectedItem();
         String machine  = machineNumber.name;
-
+        String top_prd_no = edit_prd_no.getText().toString();
+        String top_only_no = edit_only_no.getText().toString();
+        String top_Z_top_no = edit_Z_top_no.getText().toString();
 
         SharedPreferences sp = getSharedPreferences("MachineSOLine", MODE_PRIVATE);
         SharedPreferences.Editor spEditor = sp.edit();
         spEditor.putString(machine, json);
+        spEditor.putString(machine + "-prd_no", top_prd_no);
+        spEditor.putString(machine + "-only_no", top_only_no);
+        spEditor.putString(machine + "-Z_top_no", top_Z_top_no);
+
+
         spEditor.commit();
     }
 
@@ -912,6 +953,10 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
         String machine  = machineNumber.name;
         SharedPreferences sp = getSharedPreferences("MachineSOLine", MODE_PRIVATE);
         if(sp.contains(machine)){
+            edit_prd_no.setText( sp.getString(machine + "-prd_no",""));
+            edit_only_no.setText( sp.getString(machine + "-only_no",""));
+            edit_Z_top_no.setText( sp.getString(machine + "-Z_top_no",""));
+
             Gson gson = new Gson();
             SelectSoLineModel[] lastSoLines =  gson.fromJson(sp.getString(machine, "[]"),SelectSoLineModel[].class);
             //return lines;
@@ -922,12 +967,83 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
                     adapter.add(lastSoLines[i]);
                 }
                 adapter.notifyDataSetChanged();
+
+                refreshSoLineFinishQty();
             }
         }
         else {
+            edit_prd_no.setText( "");
+            edit_only_no.setText( "");
+            edit_Z_top_no.setText("");
             adapter.removeAll();
             adapter.notifyDataSetChanged();
         }
+    }
+
+    public void refreshSoLineFinishQty(){
+        List<SelectSoLineModel> list = adapter.getList();
+        String so_no_list = "";
+        for(int i = 0; i < list.size(); i++) {
+             so_no_list = so_no_list + (list.get(i).so_no + ":" +list.get(i).itm) + ",";
+        }
+        //Log.d("so_no_list", so_no_list);
+        //请求参数
+        HashMap<String,String> paramsMap=new HashMap<>();
+        paramsMap.put("NowLoginId", MainActivity.current_login_id);
+        paramsMap.put("NowUnderPassKey", MainActivity.current_NowUnderPassKey);
+        paramsMap.put("action","GetTableBodyListAfterCheck_WithList");
+        paramsMap.put("so_no_list", so_no_list);
+
+        FormBody.Builder builder = new FormBody.Builder();
+        for (String key : paramsMap.keySet()) {
+            //追加表单信息
+            Log.d("test", "key="+key+", val="+paramsMap.get(key));
+            builder.add(key, paramsMap.get(key));
+        }
+        Request request = new Request.Builder()
+                .url(WebApi.getRealUrl(WebApi.URL_SO))
+                .post(builder.build())
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),String.format("刷新订单缴库量出错"), Toast.LENGTH_LONG);
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String respTxt =  response.body().string();
+                Log.d("refreshSoLineFinishQty",respTxt );
+
+                Gson gson = new Gson();
+                final PageResultModel<SelectSoLineModel> result = gson.fromJson(respTxt, new TypeToken<PageResultModel<SelectSoLineModel>>(){}.getType());
+
+                final SelectSoLineModel[] list = result.items; //gson.fromJson(result.items, SelectSoLineModel[].class);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                    if (list != null && list.length>0)
+                    {
+                        for(int i = 0; i<list.length; ++i) {
+                            for (int j = 0; j < adapter.getList().size(); j++) {
+                                SelectSoLineModel row = ((SelectSoLineModel)adapter.getItem(j));
+                                if(list[i].so_no.equals( row.so_no) && list[i].itm.equals( row.itm)){
+                                    row.qty_jk = list[i].qty_jk;
+                                }
+                            }
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                    }
+                });
+            }
+        });
     }
 
     public void showDeleteSolineMenu(final int position2) {
@@ -1039,6 +1155,7 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
 
         FormBody.Builder builder = new FormBody.Builder();
         for (String key : paramsMap.keySet()) {
+            Log.d("loadPrintorModels  " + key , "--" + paramsMap.get(key));
             //追加表单信息
             builder.add(key, paramsMap.get(key));
         }
@@ -1061,21 +1178,23 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String respTxt =  response.body().string();
-                Gson gson = new Gson();
-                final PrintorModel[] models = gson.fromJson(respTxt, PrintorModel[].class);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (models != null )
-                        {
-                            ArrayAdapter<PrintorModel> spinnerAdapter = new ArrayAdapter<PrintorModel>(getApplicationContext(),
-                                    R.layout.support_simple_spinner_dropdown_item, models);
-                            if(tableType.equals("JLBACK")) {
-                                edit_print_back.setAdapter(spinnerAdapter);
+                        try {
+                            Gson gson = new Gson();
+                            final PrintorModel[] models = gson.fromJson(respTxt, PrintorModel[].class);
+                            if (models != null) {
+                                ArrayAdapter<PrintorModel> spinnerAdapter = new ArrayAdapter<PrintorModel>(getApplicationContext(),
+                                        R.layout.support_simple_spinner_dropdown_item, models);
+                                if (tableType.equals("JLBACK")) {
+                                    edit_print_back.setAdapter(spinnerAdapter);
+                                } else if (tableType.equals("JLIN")) {
+                                    edit_print_jk.setAdapter(spinnerAdapter);
+                                }
                             }
-                            else  if(tableType.equals("JLIN")) {
-                                edit_print_jk.setAdapter(spinnerAdapter);
-                            }
+                        } catch (Exception e) {
+                            Toast.makeText(getApplicationContext(),String.format("加载模版出错"), Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -1106,26 +1225,30 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                final String respTxt =  response.body().string();
-                Gson gson = new Gson();
-                final PrintorModel[] models = gson.fromJson(respTxt, PrintorModel[].class);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Toast.makeText(getApplicationContext(), respTxt, Toast.LENGTH_LONG).show();
-                        if (models != null )
-                        {
-                            ArrayAdapter<PrintorModel> spinnerAdapter2 = new ArrayAdapter<PrintorModel>(getApplicationContext(),
-                                    R.layout.support_simple_spinner_dropdown_item, models);
-                            edit_printor_jk.setAdapter(spinnerAdapter2);
+                final String respTxt = response.body().string();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Gson gson = new Gson();
+                                final PrintorModel[] models = gson.fromJson(respTxt, PrintorModel[].class);
+                                //Toast.makeText(getApplicationContext(), respTxt, Toast.LENGTH_LONG).show();
+                                if (models != null) {
+                                    ArrayAdapter<PrintorModel> spinnerAdapter2 = new ArrayAdapter<PrintorModel>(getApplicationContext(),
+                                            R.layout.support_simple_spinner_dropdown_item, models);
+                                    edit_printor_jk.setAdapter(spinnerAdapter2);
 
-                            ArrayAdapter<PrintorModel> spinnerAdapter = new ArrayAdapter<PrintorModel>(getApplicationContext(),
-                                    R.layout.support_simple_spinner_dropdown_item, models);
-                            edit_printor_back.setAdapter(spinnerAdapter);
+                                    ArrayAdapter<PrintorModel> spinnerAdapter = new ArrayAdapter<PrintorModel>(getApplicationContext(),
+                                            R.layout.support_simple_spinner_dropdown_item, models);
+                                    edit_printor_back.setAdapter(spinnerAdapter);
+                                }
+                            }
+                            catch (Exception e) {
+                                Toast.makeText(getApplicationContext(), String.format("加载打印机出错"), Toast.LENGTH_LONG).show();
+                            }
                         }
-                    }
-               });
-            }
+                    });
+                }
         });
     }
 

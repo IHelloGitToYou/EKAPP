@@ -6,6 +6,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ek.JK_SOActivity;
 import com.ek.R;
 import com.ek.model.OnlyNoItem;
 
@@ -24,6 +25,13 @@ public class OnlyNoListAdapter extends BaseAdapter {
         list.add(item);
         notifyDataSetChanged();
     }
+
+    public void insert(OnlyNoItem item)
+    {
+        list.add(0,item);
+        notifyDataSetChanged();
+    }
+
 
     public void remove(OnlyNoItem item)
     {
@@ -77,9 +85,15 @@ public class OnlyNoListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
+        Double qty1 = Math.round((list.get(position).qty1) *100.00)/100.00;
+
         String showText = list.get(position).only_no + "   "+ list.get(position).FD_width.toString()
                 + "*" +  list.get(position).FD_length.toString() + " 货号:" +  list.get(position).prd_no.toString()+
-                "  " + list.get(position).Z_kg.toString() + "kg"  ;
+                "  " +  qty1.toString() + "kg"  ;
+
+        if(list.get(position).is_multi.equals("T") || list.get(position).is_multi.equals("on")){
+            showText = showText + " " + list.get(position).qty.toString() + "卷";
+        }
 
         holder.text.setText(showText);
         return convertView;

@@ -105,7 +105,7 @@ public class SelectSOItemActivity extends AppCompatActivity implements View.OnCl
                 }
 
                 Intent intent = new Intent();
-                intent.putExtra("SoItems", list );
+                intent.putExtra("SoItems", list);
                 setResult(SELECTED_COMPLETE, intent);
                 finish();
                 break;
@@ -191,7 +191,7 @@ public class SelectSOItemActivity extends AppCompatActivity implements View.OnCl
             public void onResponse(Call call, Response response) throws IOException {
                 final String respTxt =  response.body().string();
                 Gson gson = new Gson();
-                Log.d("gson", respTxt);
+                //Log.d("gson", respTxt);
 
                 final PageResultModel<SelectSoLineModel> result = gson.fromJson(respTxt, new TypeToken<PageResultModel<SelectSoLineModel>>(){}.getType());
 

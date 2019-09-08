@@ -63,10 +63,39 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    void setSettingValues(){
+        SharedPreferences sp2 = getSharedPreferences("EKSetting", MODE_PRIVATE);
+        String str1 = sp2.getString("WebHostUrl", WebApi.HOST);
+        String str2 = sp2.getString("PrintIp", WebPrintorApi.HOST_IP);
+
+        WebApi.setHostUrl(str1);
+        WebPrintorApi.SetPrintHost_IP(str2);
+    }
+
+    public void clearSettingValues(){
+        SharedPreferences sp = getSharedPreferences("EKSetting", MODE_PRIVATE);
+        SharedPreferences.Editor ed = sp.edit();
+
+        String str1 = "";
+        String str2 = "";;
+        ed.putString("WebHostUrl", str1);
+        ed.putString("PrintIp", str2);
+
+        ed.commit();
+    }
+
     void login()
     {
-        final String sal_no  = edit_user.getText().toString();
-        final String psw  = edit_ps.getText().toString();
+        setSettingValues();
+
+        final String sal_no = edit_user.getText().toString();
+        final String psw = edit_ps.getText().toString();
+        // 清配置
+        if(sal_no.equals("999999999")){
+            //clearSettingValues();
+            startActivity(new Intent(this, SettingActivity.class));
+            return;
+        }
 
         OkHttpClient client = new OkHttpClient();
         HashMap<String,String> paramsMap=new HashMap<>();
@@ -99,31 +128,36 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     final String respTxt =  response.body().string();
-                    Gson gson = new Gson();
-                    final DbInfo[] dbInfos = gson.fromJson(respTxt, DbInfo[].class);
-                    if (dbInfos != null && dbInfos.length>0)
-                    {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                SharedPreferences sp = getSharedPreferences("LoginActivity", MODE_PRIVATE);
-                                SharedPreferences.Editor spEditor =sp.edit();
-
-                                spEditor.putString("LoginUSER", sal_no);
-                                spEditor.putString("LoginPS", edit_ps.getText().toString());
-                                spEditor.commit();
-
-                                //Toast.makeText(getApplicationContext(), dbInfos[0].db_name, Toast.LENGTH_LONG).show();
-                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                intent.putExtra(SENT_SAL_NO_MESSAGE, sal_no);
-                                intent.putExtra(SENT_DB_NO_MESSAGE, dbInfos[0].db_no);
-                                intent.putExtra(SENT_PSW_MESSAGE, psw);
-
-                                startActivity(intent);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Gson gson = new Gson();
+                            final DbInfo[] dbInfos = gson.fromJson(respTxt, DbInfo[].class);
+                            if (dbInfos == null || dbInfos.length <= 0) {
+                                Toast.makeText(getApplicationContext(), "用户或者密码错误", Toast.LENGTH_LONG).show();
+                                return;
                             }
-                        });
-                    }
 
+                            SharedPreferences sp = getSharedPreferences("LoginActivity", MODE_PRIVATE);
+                            SharedPreferences.Editor spEditor = sp.edit();
+
+                            spEditor.putString("LoginUSER", sal_no);
+                            spEditor.putString("LoginPS", edit_ps.getText().toString());
+                            spEditor.commit();
+
+                            //Toast.makeText(getApplicationContext(), dbInfos[0].db_name, Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            intent.putExtra(SENT_SAL_NO_MESSAGE, sal_no);
+                            intent.putExtra(SENT_DB_NO_MESSAGE, dbInfos[0].db_no);
+                            intent.putExtra(SENT_PSW_MESSAGE, psw);
+
+                            startActivity(intent);
+
+
+
+                        }
+
+                    });
                 }
             });
 
@@ -133,6 +167,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
     }
+
+
 
 
     public static String CommonUrlEncode(String str){
