@@ -611,6 +611,8 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
         String showText = newNo + " " +  paramsMap.get("FD_width") + "*"
                                         + paramsMap.get("FD_length") + "  "
                                         + paramsMap.get("qty1") + "kg";
+        if(getInt(paramsMap.get("qty")) > 1)
+            showText =  showText + "(" + paramsMap.get("qty")  + "卷)";
 
         HistoryJLModel h =  new HistoryJLModel();
         h.showMsg = showText;

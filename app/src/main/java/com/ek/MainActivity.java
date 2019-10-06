@@ -57,7 +57,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         String menu =  ((TextView)view.findViewById(R.id.txt_menu)).getText().toString();
         String menuText = (String) adapter.getItem(position);
         Log.d("test", "menu="+ menu + ", menuText=" + menuText);
-        if (menuText.equals("卷料上架")) {
+        if (menuText.equals("销售发货")) {
+            startActivity(new Intent(this, sa_Activity.class));
+        }
+        else if (menuText.equals("托盘管理")) {
+            startActivity(new Intent(this, sa_plate_Activity.class));
+        }
+        else if (menuText.equals("卷料上架")) {
             startActivity(new Intent(this, z_path_Activity.class));
         }
         else if (menuText.equals("卷料出库")){

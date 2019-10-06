@@ -11,4 +11,5 @@ public class NormalResult {
     public String tz_no; //出库是返回 使用
 
     public String old_Z_path; //上架是返回 使用
+    public String jl_json; //托盘管理 是返回 使用
 }

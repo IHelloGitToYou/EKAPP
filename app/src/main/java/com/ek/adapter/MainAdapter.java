@@ -10,8 +10,8 @@ import com.ek.R;
 
 public class MainAdapter extends BaseAdapter {
 
-    String[] menus = new String[]{"卷料上架", "卷料出库", "生产机台","配置"};
-    int[] icons = new int[]{ R.drawable.zpath , R.drawable.roll, R.drawable.roll, R.drawable.setting };
+    String[] menus = new String[]{ "托盘管理", "销售发货", "卷料上架", "卷料出库", "生产机台","配置"};
+    int[] icons = new int[]{ R.drawable.plate, R.drawable.delivery, R.drawable.zpath , R.drawable.roll, R.drawable.roll, R.drawable.setting };
 
     @Override
     public int getCount() {

@@ -119,7 +119,7 @@ public class ShowHistoryOnlyAdapter extends BaseAdapter {
         holder.label_so_no.setText(list.get(position).lock_table_no+"");
         String temp = list.get(position).Z_core_kg  +"+"+ list.get(position).qty1 + "=" + list.get(position).Z_kg +"kg ";
         if(list.get(position).qty > 1)
-            temp += "(" + list.get(position).qty  + "卷)";
+            temp =  temp + "(" + list.get(position).qty  + "卷)";
 
         holder.label_show_qty.setText(temp);
         //holder.label_Z_print.setText(list.get(position).Z_print);

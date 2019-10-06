@@ -96,7 +96,7 @@ public class z_path_Activity extends AppCompatActivity implements View.OnClickLi
         String only_no = edit_only_no.getText().toString();
         String z_path = edit_Z_path.getText().toString();
         if(z_path.isEmpty()){
-            Toast.makeText(getApplicationContext(),String.format("位置请先输入"), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),String.format("[位置]请先输入"), Toast.LENGTH_LONG).show();
 //            edit_Z_path.setSelectAllOnFocus(true);
 //            edit_Z_path.requestFocus();
             return;
@@ -125,7 +125,7 @@ public class z_path_Activity extends AppCompatActivity implements View.OnClickLi
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(),String.format("更新上架位置出错"), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),String.format("更新[上架位置]出错"), Toast.LENGTH_LONG).show();
                         focusToEditText();
                     }
                 });
@@ -144,7 +144,7 @@ public class z_path_Activity extends AppCompatActivity implements View.OnClickLi
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(getApplicationContext(),String.format("更新位置[%s]成功!", edit_only_no.getText().toString() ), Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(),String.format("更新[位置][%s]成功!", edit_only_no.getText().toString() ), Toast.LENGTH_LONG).show();
                                 HistoryJLModel newItem = new HistoryJLModel();
                                 newItem.isNew =true;
                                 newItem.showMsg = String.format("更新卷[%1s]位置[%2s]->[%3s]",

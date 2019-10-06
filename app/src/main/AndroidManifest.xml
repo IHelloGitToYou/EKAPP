@@ -30,7 +30,8 @@
 
         <activity android:name=".TakeOutActivity" android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".z_path_Activity" android:theme="@style/AppTheme.NoActionBar" />
-
+        <activity android:name=".sa_plate_Activity" android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".sa_Activity" android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".JK_SOActivity"
             android:theme="@style/AppTheme.NoActionBar" />
