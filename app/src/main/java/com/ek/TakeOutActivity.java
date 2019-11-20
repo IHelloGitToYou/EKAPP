@@ -55,7 +55,7 @@ public class TakeOutActivity extends AppCompatActivity implements View.OnClickLi
         edit_only_no.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                Log.d("监听setOnKeyListener", "keycode =" + keyCode);
+                //Log.d("监听setOnKeyListener", "keycode =" + keyCode);
                 if (keyCode == KeyEvent.KEYCODE_BACK ) {
                     if(adapter.getCount() >= 1) {
                         dialog();
@@ -69,6 +69,7 @@ public class TakeOutActivity extends AppCompatActivity implements View.OnClickLi
                 if (edit_only_no.getText().toString().isEmpty())
                     return true;
                 if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+                    Toast.makeText(getApplicationContext(),String.format("开始扫描[%s]", edit_only_no.getText().toString() ), Toast.LENGTH_LONG).show();
                     tryToAddJL();
                 }
                 return false;

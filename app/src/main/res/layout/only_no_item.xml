@@ -5,11 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <TextView
         android:id="@+id/tv_only_no"
        android:layout_width="match_parent"
-        android:layout_height="35dp"
+        android:layout_height="60dp"
         android:layout_marginTop="6dp"
         />
 

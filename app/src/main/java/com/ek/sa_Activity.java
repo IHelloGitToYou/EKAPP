@@ -16,13 +16,13 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.ek.Controls.ExampleListView;
 import com.ek.adapter.Sa_SelectAdapter;
 import com.ek.model.NormalResult;
 import com.ek.model.OnlyNoItem;
 import com.ek.model.Sa_SelectModel;
 import com.ek.model.Sa_TableBody;
 import com.ek.model.Sa_TableHead;
-import com.ek.model.SelectSoLineModel;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -39,7 +39,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class sa_Activity extends AppCompatActivity implements View.OnClickListener{
-    ListView listView;
+    ExampleListView listView;
     Sa_SelectAdapter adapter;
     Switch edit_switch;
     EditText edit_sa_no;
@@ -48,9 +48,12 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
     OkHttpClient client;
     Button Btn_Submit;
     String LastSA_NO = "";
+    Boolean LastSA_HadJL = false;
     Sa_TableBody[] currentSABody;
+    OnlyNoItem[] currentSABodyJLs;
     private  static  String lastNo;
     boolean IS_LOADING = false;
+    boolean IS_LOADING_JL = false;
     boolean IS_SubmitZPlateIng = false;
 
     @Override
@@ -64,6 +67,8 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
         Btn_Submit = findViewById(R.id.Btn_Submit);
         listView = findViewById(R.id.listView);
         client = new OkHttpClient();
+
+
 
 
         edit_show_qty.setOnKeyListener(new View.OnKeyListener() {
@@ -84,15 +89,37 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
                     if (edit_Z_plateOrOnly.getText().toString().isEmpty())
                         return false;
 
+                    String so_no = edit_Z_plateOrOnly.getText().toString();
+                    if(so_no.isEmpty()){
+                        clear();
+                        remember();
+                        return false;
+                    }
+
+
                     if(LastSA_NO.isEmpty()){
                         Toast.makeText(getApplicationContext(),String.format("[销售发货单]请先输入"), Toast.LENGTH_LONG).show();
                         return false;
                     }
+
                     boolean isScanPlate = edit_switch.isChecked();
-                    if(isScanPlate == true)
-                        loadZPlate(edit_Z_plateOrOnly.getText().toString() );
-                    else
-                        loadJL(edit_Z_plateOrOnly.getText().toString());
+
+                    //无扫过卷的，查后台
+                    if(LastSA_HadJL == false) {
+                        if (isScanPlate == true)
+                            loadZPlate(edit_Z_plateOrOnly.getText().toString());
+                        else
+                            loadJLFormAPI(edit_Z_plateOrOnly.getText().toString());
+                    }
+                    else{
+                        if (isScanPlate == true) {
+                            loadZPlate(edit_Z_plateOrOnly.getText().toString());
+                        }
+                        else {
+                            loadJLFormCache();
+                            return  true;
+                        }
+                    }
                 }
                 return false;
             }
@@ -104,15 +131,16 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (edit_sa_no.getText().toString().isEmpty()) {
-                        //adapter.removeAll();
                         return false;
                     }
+                    if( IS_LOADING == true || IS_LOADING_JL == true)
+                        return false;
 
                     String sa_no = edit_sa_no.getText().toString();
-                    if(LastSA_NO == sa_no)
+                    if(LastSA_NO.equals( sa_no)) {
+                        Toast.makeText(getApplicationContext(),String.format("[相同的发货单，不重新加载]"), Toast.LENGTH_LONG).show();
                         return false;
-                    if( IS_LOADING == true )
-                        return false;
+                    }
 
                     loadSAHead();
                 }
@@ -122,6 +150,7 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
         });
 
         listView.setAdapter(adapter = new Sa_SelectAdapter(new ArrayList<Sa_SelectModel>()));
+
 
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -143,6 +172,20 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
 
         getRemember();
         focusToSAEditText();
+
+
+        edit_Z_plateOrOnly.setFocusable(true);
+        edit_Z_plateOrOnly.setSelectAllOnFocus(true);
+
+
+       // ExampleListView listView = (ExampleListView) View.findViewById(R.id.practice_exercises_list);
+        listView.setListener(new ExampleListView.ListViewListener() {
+            @Override
+            public void onChangeFinished() {
+                //txtCurrentFocus.requestFocus();
+                focusToEditText();
+            }
+        });
     }
 
     Boolean isSubmiting = false;
@@ -151,6 +194,7 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
         //edit_sa_no.setText("");
         edit_Z_plateOrOnly.setText("");
         LastSA_NO = "";
+        LastSA_HadJL = false;
         adapter.removeAll();
 
         focusToSAEditText();
@@ -186,9 +230,14 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
         HashMap<String,String> paramsMap = new HashMap<>();
         paramsMap.put("NowLoginId", MainActivity.current_login_id);
         paramsMap.put("NowUnderPassKey", MainActivity.current_NowUnderPassKey);
-        paramsMap.put("action","SCAN_JL_BY_PDA");
+        if(LastSA_HadJL == true)
+            paramsMap.put("action",  "SCAN_JL_CHECK_BY_PDA");
+        else
+            paramsMap.put("action",  "SCAN_JL_BY_PDA");
+
         paramsMap.put("sa_id","SO3");
         paramsMap.put("sa_no", LastSA_NO );
+
         paramsMap.put("only_nos",only_nos);
 
         FormBody.Builder builder = new FormBody.Builder();
@@ -230,6 +279,7 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
 
                             clear();
                             remember();
+                            edit_sa_no.setText("");
                         }
                         else{
                             focusToSAEditText();
@@ -263,6 +313,8 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
         paramsMap.put("action","GetTableHead");
         paramsMap.put("sa_id","SO3");
         paramsMap.put("sa_no", sa_no );
+        paramsMap.put("CheckHasJL","1112要检查有无JL233");
+
 
         FormBody.Builder builder = new FormBody.Builder();
         for (String key : paramsMap.keySet()) {
@@ -291,7 +343,7 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
             public void onResponse(Call call, Response response) throws IOException {
                 IS_LOADING = false;
                 final String respTxt =  response.body().string();
-                //Log.d("abc", respTxt);
+                Log.d("abc", respTxt);
                 Gson gson = new Gson();
                 final Sa_TableHead[] list = gson.fromJson(respTxt, Sa_TableHead[].class);
                 if (list != null )
@@ -315,6 +367,11 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
                                 LastSA_NO = list[0].sa_no;
                                 //Toast.makeText(getApplicationContext(), String.format("加载[销售发货单信息][%s]成功!", sa_no), Toast.LENGTH_LONG).show();
                                 loadSABody();
+
+                                if(list[0].is_had_jl == 1) {
+                                    LastSA_HadJL = true;
+                                    loadSAJLs();
+                                }
                             }
                             else{
                                 Toast.makeText(getApplicationContext(), "加载[销售发货单信息]出错" , Toast.LENGTH_SHORT).show();
@@ -339,6 +396,7 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
         if(sa_no.isEmpty()){
             Toast.makeText(getApplicationContext(),String.format("[销售发货单号]请先输入"), Toast.LENGTH_LONG).show();
             focusToSAEditText();
+            IS_LOADING = false;
             return;
         }
 
@@ -410,6 +468,77 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
     }
 
 
+    public void loadSAJLs(){
+        IS_LOADING_JL = true;
+        final String sa_no = edit_sa_no.getText().toString();
+
+        HashMap<String,String> paramsMap = new HashMap<>();
+        paramsMap.put("NowLoginId", MainActivity.current_login_id);
+        paramsMap.put("NowUnderPassKey", MainActivity.current_NowUnderPassKey);
+        paramsMap.put("action","GetTableBodyJL");
+        paramsMap.put("sa_id","SO3");
+        paramsMap.put("sa_no", sa_no );
+
+        FormBody.Builder builder = new FormBody.Builder();
+        for (String key : paramsMap.keySet()) {
+            builder.add(key, paramsMap.get(key));
+        }
+
+        Request request = new Request.Builder()
+                .url(WebApi.getRealUrl(WebApi.URL_EKSA))
+                .post(builder.build())
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                IS_LOADING_JL = false;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LastSA_NO = "";
+                        Toast.makeText(getApplicationContext(),String.format("出错加载[销售发料已扫卷料]"), Toast.LENGTH_LONG).show();
+                        focusToEditText();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                IS_LOADING_JL = false;
+                final String respTxt =  response.body().string();
+                //Log.d("abc", respTxt);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Gson gson = new Gson();
+                        final OnlyNoItem[] list = gson.fromJson(respTxt, OnlyNoItem[].class);
+                        if (list != null )
+                        {
+                            if( list.length > 0){
+                                currentSABodyJLs = list;
+                                //Toast.makeText(getApplicationContext(), String.format("加载[销售发料已扫卷料][%s]成功!", sa_no), Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "加载[销售发料已扫卷料]成功" + list.length, Toast.LENGTH_SHORT).show();
+                                focusToEditText();
+                            }
+                            else{
+                                Toast.makeText(getApplicationContext(), "出错加载[销售发料已扫卷料]" , Toast.LENGTH_SHORT).show();
+                                focusToSAEditText();
+                            }
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(), "加载[销售发料已扫卷料]出错" , Toast.LENGTH_SHORT).show();
+                            focusToSAEditText();
+                            LastSA_NO = "";
+                            currentSABodyJLs = null;
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+
     Integer lastScanQty = 0;
 //    boolean IsScanFinish = false;
     public void RefreshScanOKQty(){
@@ -445,12 +574,13 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
 
             if(only.lock_table_no.isEmpty() || only.lock_table_itm.isEmpty()){
                 Toast.makeText(getApplicationContext(),String.format("卷数[%s}]没有所属订单信息",only.only_no), Toast.LENGTH_LONG).show();
+                //focusToEditText();
                 return false;
             }
 
-            if(only.state.equals("1") == false ) {
+            if(LastSA_HadJL == false && only.state.equals("1") == false ) {
                 Toast.makeText(getApplicationContext(),String.format("卷料[%s][库存状态]非在库", only.only_no), Toast.LENGTH_LONG).show();
-                focusToEditText();
+                //focusToEditText();
                 return false;
             }
 
@@ -516,12 +646,30 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
                     @Override
                     public void run() {
 
+                        String temp = "[复核]";
+                        if(LastSA_HadJL == false)
+                            temp = "";
+
                         if (onlys != null && onlys.length > 0) {
                             Sa_SelectModel newRec = new Sa_SelectModel();
                             newRec.type = "PLATE";
                             newRec.no = Z_plate;
                             newRec.jls = new ArrayList<OnlyNoItem>();
+
                             for (int i = 0; i < onlys.length; i++) {
+                                if (LastSA_HadJL == true) {
+                                    OnlyNoItem cacheJL = findJLOnScaned(onlys[i].only_no);
+                                    if(cacheJL == null){
+                                        Toast.makeText(getApplicationContext(),String.format("[复核]卷料[%s]不属于销售发货单!", onlys[i].only_no), Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+
+                                    //如果卷料是集合卷，发货Qty = 0的，所以要从 销售发货卷料中复制出来
+                                    if (onlys[i].is_multi.equals("T") || onlys[i].is_multi.equals("t")) {
+                                        onlys[i].qty = cacheJL.qty;
+                                        onlys[i].qty1 = cacheJL.qty1;
+                                    }
+                                }
                                 newRec.jls.add(onlys[i]);
                             }
 
@@ -530,15 +678,15 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
                                 return;
                             }
 
-                            adapter.add(newRec);
+                            adapter.insert(newRec);
                             RefreshScanOKQty();
                             edit_Z_plateOrOnly.setText("");
                             focusToEditText();
-                            Toast.makeText(getApplicationContext(),String.format("扫描托盘[%s]卷料成功!", Z_plate), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(),String.format("%s2扫描托盘%1s卷料成功!", Z_plate, temp), Toast.LENGTH_LONG).show();
                             remember();
                         }
                         else{
-                            Toast.makeText(getApplicationContext(),String.format("扫描托盘[%s]失败!", Z_plate), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(),String.format("%s2扫描托盘%1s失败!", Z_plate, temp), Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -547,7 +695,7 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
     }
 
 
-    public  void loadJL(final String only_no) {
+    public  void loadJLFormAPI(final String only_no) {
         HashMap<String,String> paramsMap=new HashMap<>();
         paramsMap.put("NowLoginId", MainActivity.current_login_id);
         paramsMap.put("NowUnderPassKey", MainActivity.current_NowUnderPassKey);
@@ -622,6 +770,46 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
         });
     }
 
+    public void loadJLFormCache(){
+
+        String only_no = edit_Z_plateOrOnly.getText().toString();
+        OnlyNoItem cacheJL = findJLOnScaned(only_no);
+        if(cacheJL == null){
+            Toast.makeText(getApplicationContext(),String.format("[复核]卷料[%s]不属于销售发货单!", only_no), Toast.LENGTH_LONG).show();
+            return ;
+        }
+        else{
+            Sa_SelectModel newRec = new Sa_SelectModel();
+            newRec.type = "JL";
+            newRec.no = only_no;
+            newRec.jls = new ArrayList<OnlyNoItem>();
+            newRec.jls.add(cacheJL);
+
+            if(CheckSaSelectModel(newRec) == false){
+                focusToEditText();
+                return;
+            }
+
+            adapter.insert(newRec);
+            RefreshScanOKQty();
+            edit_Z_plateOrOnly.setText("");
+            Toast.makeText(getApplicationContext(),String.format("[复核]扫描卷料[%s]成功!", only_no), Toast.LENGTH_LONG).show();
+            remember();
+
+            focusToEditText();
+        }
+    }
+
+    //在SA单已扫描的卷料中 查找 卷料
+    public OnlyNoItem findJLOnScaned(final String only_no) {
+        for (int i = 0; i < currentSABodyJLs.length; i++) {
+            //Log.d("findJLOnScaned", currentSABodyJLs[i].only_no);
+            if(currentSABodyJLs[i].only_no.equals(only_no))
+                return  currentSABodyJLs[i];
+        }
+
+        return  null;
+    }
 
     public void showMenu(final Sa_SelectModel item){
         String[] menuText = {"移出"};
@@ -661,11 +849,19 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
         Gson gson = new Gson();
         SharedPreferences sp = getSharedPreferences("SA_ACTIVITY", MODE_PRIVATE);
         SharedPreferences.Editor spEditor = sp.edit();
-        if(currentSABody == null || currentSABody.length <=0) {
+        if(adapter.getCount() == 0 || currentSABody == null || currentSABody.length <= 0) {
             spEditor.clear();
         }
         else {
             spEditor.putString("SA_NO", edit_sa_no.getText().toString());
+            if(LastSA_HadJL == true) {
+                spEditor.putString("LastSA_HadJL", "1");
+                spEditor.putString("currentSABodyJL", gson.toJson(currentSABodyJLs));
+            }
+            else
+                spEditor.putString("LastSA_HadJL", "0");
+
+
             spEditor.putString("currentSABody", gson.toJson(currentSABody));
             spEditor.putString("adapter", gson.toJson(adapter.getList()));
             //Sa_TableBody[] currentSABody;
@@ -680,6 +876,7 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
         SharedPreferences sp = getSharedPreferences("SA_ACTIVITY", MODE_PRIVATE);
 
         String sa_no = sp.getString("SA_NO", "");
+        String lastSA_HadJL = sp.getString("LastSA_HadJL", "0");
         String adapterJson = sp.getString("adapter", "");
         String currentSABodyJson = sp.getString("currentSABody", "");
 //        Log.d("abccc", "getRemember: sa_no"+sa_no);
@@ -689,6 +886,13 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
             return;
         edit_sa_no.setText(sa_no);
         LastSA_NO = sa_no;
+        LastSA_HadJL = lastSA_HadJL.equals("1");
+
+        if(LastSA_HadJL == true) {
+            String currentSABodyJLJson = sp.getString("currentSABodyJL", "");
+            OnlyNoItem[] list1 = new Gson().fromJson(currentSABodyJLJson, OnlyNoItem[].class);
+            currentSABodyJLs = list1;
+        }
 
         Sa_SelectModel[] list1 = new Gson().fromJson(adapterJson,Sa_SelectModel[].class);
         List<Sa_SelectModel> list1_2 = Arrays.asList(list1);
@@ -701,8 +905,10 @@ public class sa_Activity extends AppCompatActivity implements View.OnClickListen
     }
 
     public void focusToEditText(){
-        edit_Z_plateOrOnly.setSelectAllOnFocus(true);
+        Log.d("focusToEditText", "开始");
+
         edit_Z_plateOrOnly.requestFocus();
+        Log.d("focusToEditText", "结束");
     }
 
     public void focusToSAEditText(){

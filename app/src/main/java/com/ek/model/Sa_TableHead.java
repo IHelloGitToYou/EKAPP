@@ -11,6 +11,8 @@ public class Sa_TableHead {
     public String table_state ;  //1.有效的
     public String Z_work_no;
     public String check_state ; //2.未审核 3.已审核
+    public int is_had_jl ;  // Action CheckHasJL
+
     ////////////////////////////////
 
 //    FD_cgmark: ""

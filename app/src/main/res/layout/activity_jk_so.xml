@@ -575,8 +575,17 @@
                 android:padding="0dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+
             <Button
                 android:layout_marginTop="5dp"
+                android:id="@+id/Show_HistoryJL"
+                android:text="历史"
+                android:padding="0dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:layout_marginTop="10dp"
                 android:id="@+id/Do_BACK_WH4"
                 android:text="退半成品"
                 android:padding="0dp"
@@ -590,13 +599,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <Button
-                android:layout_marginTop="5dp"
-                android:id="@+id/Show_HistoryJL"
-                android:text="历史"
-                android:padding="0dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+
         </LinearLayout>
 
 

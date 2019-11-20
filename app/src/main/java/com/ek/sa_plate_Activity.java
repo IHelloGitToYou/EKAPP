@@ -70,6 +70,11 @@ public class sa_plate_Activity extends AppCompatActivity implements View.OnClick
 
                     if(LastZ_Plate.isEmpty()){
                         Toast.makeText(getApplicationContext(),String.format("[托盘]请先输入"), Toast.LENGTH_LONG).show();
+                        String Z_plate = edit_Z_plate.getText().toString();
+                        if(Z_plate.isEmpty() == false){
+                            IS_LOADING = true;
+                            loadOnlys(Z_plate);
+                        }
                         return  false;
                     }
 
@@ -254,6 +259,8 @@ public class sa_plate_Activity extends AppCompatActivity implements View.OnClick
                                 adapter.add(onlys[i]);
                             }
                         }
+
+                        Toast.makeText(getApplicationContext(),String.format("加载[托盘]成功，加载了[%s]卷", onlys.length), Toast.LENGTH_LONG).show();
                     }
                 });
             }

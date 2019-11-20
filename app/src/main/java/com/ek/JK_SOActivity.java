@@ -257,11 +257,106 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 getSoLineToShareP();
+
+                RefreshHistoryList();
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {            }
         });
     }
+
+
+    private  void RefreshHistoryList(){
+        final WHInfoModel machineNumber = (WHInfoModel)edit_machine.getSelectedItem();
+        if(machineNumber == null)
+        {
+            historyJLAdapter.removeAll();
+            return;
+        }
+
+        historyJLAdapter.removeAll();
+
+        HashMap<String,String> paramsMap = new HashMap<>();
+        paramsMap.put("NowLoginId", MainActivity.current_login_id);
+        paramsMap.put("NowUnderPassKey", MainActivity.current_NowUnderPassKey);
+
+        paramsMap.put("action","GetNotFinish");
+        paramsMap.put("machine", machineNumber.name);
+
+        FormBody.Builder builder = new FormBody.Builder();
+        for (String key : paramsMap.keySet()) {
+            builder.add(key, paramsMap.get(key));
+        }
+        Request request = new Request.Builder()
+                .url(WebApi.getRealUrl(WebApi.URL_EKJOB))
+                .post(builder.build())
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),String.format("加载[历史卷料]出错"), Toast.LENGTH_LONG);
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String respTxt =  response.body().string();
+                Gson gson = new Gson();
+                try {
+                    final OnlyNoItem[] onlys = gson.fromJson(respTxt, OnlyNoItem[].class);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            if (onlys != null && onlys.length>0)
+                            {
+                                for(int i = 0; i<onlys.length; ++i) {
+                                    if(onlys[i].lock_table_id == null)  onlys[i].lock_table_id = "";
+                                    if(onlys[i].lock_table_no == null)  onlys[i].lock_table_no = "";
+                                    if(onlys[i].lock_table_itm == null)  onlys[i].lock_table_itm = "";
+
+                                    HistoryJLModel h =  new HistoryJLModel();
+
+                                    if(onlys[i].lock_table_no.isEmpty() == false){
+                                        h.showMsg = onlys[i].only_no + " " +
+                                                + getInt(onlys[i].FD_width.toString()) + "*"
+                                                + getInt(onlys[i].FD_length.toString()) + "  "
+                                                + onlys[i].qty1 + "kg";
+                                        if(onlys[i].qty > 1)
+                                            h.showMsg =  h.showMsg + "(" + onlys[i].qty  + ")卷)";
+                                    }
+                                    else{
+                                        String showFix = "退";
+                                        if(onlys[i].wh_no.equals("WH5"))
+                                            showFix = "淋";
+
+                                        String showText = showFix + onlys[i].only_no + " " +  getInt(onlys[i].FD_width.toString())+ "*" + getInt(onlys[i].FD_length.toString()) ;
+                                        h.showMsg = showText;
+                                    }
+
+
+                                    h.isNew = true;
+                                    historyJLAdapter.add(0, h);
+                                }
+                            }
+                        }
+                    });
+                }
+                catch ( Exception e){
+                    Toast.makeText(getApplicationContext(),String.format("加载卷料出错"), Toast.LENGTH_LONG);
+                }
+
+
+
+            }
+        });
+    }
+
 
     private void listenOnlyNoChange(){
         edit_only_no.setOnKeyListener(new View.OnKeyListener() {
@@ -278,7 +373,12 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
-    private Boolean checkSubmit(){
+    private Boolean checkSubmit(Boolean isJK){
+
+        if(isJK && edit_Z_work_no.getText().toString() == "9999"){
+            Toast.makeText(getApplicationContext(),"9999只能退仓!", Toast.LENGTH_SHORT).show();
+            return false;
+        }
 
         if(edit_prd_no_bottom.getText().toString().isEmpty())
         {
@@ -354,7 +454,7 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private  void doJKBefore(){
-        if(checkSubmit() == false) {
+        if(checkSubmit(true) == false) {
             Clicking = false;
             return;
         }
@@ -632,7 +732,7 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
 
 
     private  void doBackBefore(final String wh_no, final String newNo){
-        if(checkSubmit() == false) {
+        if(checkSubmit(false) == false) {
             Clicking = false;
             return;
         }
@@ -700,7 +800,7 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
 
 
     private  void afterDoBack(HashMap<String,String> paramsMap, String newNo, String wh_no){
-        rembSoLineToShareP();
+
 
         //paramsMap.put("only_rem", LoginActivity.CommonUrlEncode( edit_only_rem.getText().toString()));
         //paramsMap.put("Z_iface",LoginActivity.CommonUrlEncode( edit_Z_iface.getText().toString()));
@@ -711,12 +811,24 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
         final SelectSoLineModel line = (SelectSoLineModel) adapter.GetSelecteted();
         paramsMap.put("Z_hou3", line.Z_sale_hou3 + "");
 
+        /////可把录入区的信息  回写到到订单 规格上的 约定数字
+        if (line.qty >= NumberOfBackToSoLine){
+            line.FD_core = getDouble(edit_FD_core.getText().toString());
+            line.prd_no = edit_prd_no_bottom.getText().toString();
+            line.FD_width = getInt( FD_width.getText().toString());
+            line.FD_length = getInt( FD_length.getText().toString());
+
+            adapter.notifyDataSetChanged();
+        }
+
         PrintorModel pJKModel = (PrintorModel) edit_print_jk.getSelectedItem();
         PrintorModel pBackModel = (PrintorModel) edit_print_back.getSelectedItem();
         if(pJKModel != null)
             line.Z_print = pJKModel.name;
         if(pBackModel != null)
             line.print_back = pBackModel.name;
+
+        rembSoLineToShareP();
 
         //edit_Z_core_kg.setText("");
         edit_qty1.setText("");
@@ -743,6 +855,8 @@ public class JK_SOActivity extends AppCompatActivity implements View.OnClickList
             doPrintJL(printor.name, printModel.name, paramsMap);
         }
     }
+
+
 
 
     Boolean Clicking = false;

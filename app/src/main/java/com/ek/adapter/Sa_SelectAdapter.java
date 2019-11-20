@@ -25,13 +25,14 @@ public class Sa_SelectAdapter extends BaseAdapter {
     {
         list.add(item);
         updateSort();
-        notifyDataSetChanged();
+        //notifyDataSetChanged();
     }
 
     public void insert(Sa_SelectModel item)
     {
         list.add(0, item);
         updateSort();
+
         notifyDataSetChanged();
     }
 

@@ -87,7 +87,7 @@ public class OnlyNoListAdapter extends BaseAdapter {
 
         Double qty1 = Math.round((list.get(position).qty1) *100.00)/100.00;
 
-        String showText = list.get(position).only_no + "   "+ list.get(position).FD_width.toString()
+        String showText = (getCount() - position) + ":" + list.get(position).only_no + "   "+ list.get(position).FD_width.toString()
                 + "*" +  list.get(position).FD_length.toString() + " 货号:" +  list.get(position).prd_no.toString()+
                 "  " +  qty1.toString() + "kg"  ;
 
